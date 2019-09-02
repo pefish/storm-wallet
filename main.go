@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/pefish/go-application"
 	"github.com/pefish/go-config"
 	"github.com/pefish/go-http"
 	"github.com/pefish/go-logger"
@@ -30,7 +31,8 @@ func main() {
 
 	// 处理日志
 	env := go_config.Config.GetString(`env`)
-	if env == `local` || env == `dev` {
+	go_application.Application.Debug = env == `local` || env == `dev`
+	if go_application.Application.Debug {
 		loggerInstance := go_logger.Log4goClass{}
 		go_logger.Logger.Init(&loggerInstance, service.WalletSvc.GetName(), `debug`)
 	} else {

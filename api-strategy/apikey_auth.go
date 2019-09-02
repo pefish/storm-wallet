@@ -1,6 +1,7 @@
 package api_strategy
 
 import (
+	"fmt"
 	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-crypto"
@@ -21,6 +22,10 @@ var ApikeyAuthStrategy = ApikeyAuthStrategyClass{}
 
 func (this *ApikeyAuthStrategyClass) GetName() string {
 	return `apikey_auth`
+}
+
+func (this *ApikeyAuthStrategyClass) GetDescription() string {
+	return `对apikey以及签名进行校验`
 }
 
 func (this *ApikeyAuthStrategyClass) GetErrorCode() uint64 {
@@ -49,11 +54,10 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		go_error.ThrowInternal(`auth expired`)
 	}
 	apiKeyModel := model.ApiKey{}
-	if notFound := go_mysql.MysqlHelper.SelectFirst(&apiKeyModel, apiKeyModel.GetTableName(), `*`, map[string]interface{}{
-		`api_key`: apiKey,
-	}); notFound {
+	if notFound := go_mysql.MysqlHelper.RawSelectFirst(&apiKeyModel, fmt.Sprintf(`select * from %s where api_key = ? and deleted_at is null`, apiKeyModel.GetTableName()), apiKey); notFound {
 		go_error.ThrowInternal(`auth key error`)
 	}
+	out.UserId = apiKeyModel.UserId
 	realSignature := this.sign(apiKeyModel.ApiSecret, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params)
 	if realSignature != signature {
 		go_error.ThrowInternal(`auth signature error.`)

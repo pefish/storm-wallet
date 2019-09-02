@@ -18,6 +18,6 @@ func (this *WalletSvcClass) Init(opts ...interface{}) service.InterfaceService {
 	this.SetPath(`/api/wallet-storm`)
 	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
 
-	this.SetRoutes(route.UserRoute)
+	this.SetRoutes(route.AddressRoute, route.TransactionRoute, route.WithdrawRoute)
 	return this
 }
