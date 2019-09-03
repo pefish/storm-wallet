@@ -1,6 +1,16 @@
 package controller
 
-import "github.com/pefish/go-core/api-session"
+import (
+	"fmt"
+	"github.com/pefish/go-core/api-session"
+	"github.com/pefish/go-error"
+	"github.com/pefish/go-redis"
+	"github.com/satori/go.uuid"
+	"time"
+	"wallet-storm-wallet/constant"
+	"wallet-storm-wallet/model"
+	"wallet-storm-wallet/util"
+)
 
 type AddressControllerClass struct {
 }
@@ -17,7 +27,32 @@ type NewAddressReturn struct {
 }
 
 func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessionClass) interface{} {
-	return ``
+	params := NewAddressParam{}
+	apiSession.ScanParams(&params)
+
+	lockKey := fmt.Sprintf(`storm_wallet_get_deposit_address_%d_lock`, apiSession.UserId)
+	uniqueId := uuid.NewV1().String()
+	if !go_redis.RedisHelper.GetLock(lockKey, uniqueId, 3*time.Second) {
+		go_error.Throw(`rate limit`, constant.API_RATELIMIT)
+	}
+	defer go_redis.RedisHelper.ReleaseLock(lockKey, uniqueId)
+
+	currencyModel := model.UserCurrencyModel.GetCurrencyInfoByCurrencyChain(apiSession.UserId, params.Currency, params.Chain)
+	if currencyModel == nil {
+		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
+	}
+	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesIndex(apiSession.UserId, currencyModel.Series, params.Index)
+	if depositAddressModel != nil {
+		return NewAddressReturn{
+			Address: depositAddressModel.Address,
+		}
+	}
+
+	result := util.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId, params.Index)
+	model.DepositAddressModel.Insert(apiSession.UserId, result.Address, result.Path, currencyModel.Series, params.Index)
+	return NewAddressReturn{
+		Address: result.Address,
+	}
 }
 
 type ValidateAddressParam struct {

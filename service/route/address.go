@@ -16,6 +16,9 @@ var AddressRoute = map[string]*api_channel_builder.Route{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
+				Param: api_strategy.ApikeyAuthParam{
+					AllowedType: `2`,
+				},
 			},
 		},
 		ParamType: api_strategy2.ALL_TYPE,

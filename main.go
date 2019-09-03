@@ -11,6 +11,7 @@ import (
 	"runtime/debug"
 	"time"
 	"wallet-storm-wallet/service"
+	"github.com/pefish/go-redis"
 )
 
 func main() {
@@ -44,6 +45,11 @@ func main() {
 	mysqlConfig := go_config.Config.GetMap(`mysql`)
 	go_mysql.MysqlHelper.ConnectWithMap(mysqlConfig)
 	defer go_mysql.MysqlHelper.Close()
+
+	// 初始化redis连接
+	redisConfig := go_config.Config.GetMap(`redis`)
+	go_redis.RedisHelper.ConnectWithMap(redisConfig)
+	defer go_redis.RedisHelper.Close()
 
 	service.WalletSvc.SetHost(go_config.Config.GetString(`host`))
 	service.WalletSvc.SetPort(go_config.Config.GetUint64(`port`))

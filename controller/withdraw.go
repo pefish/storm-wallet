@@ -19,4 +19,3 @@ type WithdrawParam struct {
 func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSessionClass) interface{} {
 	return ``
 }
-

@@ -1,12 +1,10 @@
 package api_strategy
 
 import (
-	"fmt"
 	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-crypto"
 	"github.com/pefish/go-error"
-	"github.com/pefish/go-mysql"
 	"github.com/pefish/go-reflect"
 	"sort"
 	"strings"
@@ -33,10 +31,12 @@ func (this *ApikeyAuthStrategyClass) GetErrorCode() uint64 {
 }
 
 type ApikeyAuthParam struct {
-	AllowType string // 允许的api key类型，逗号隔开
+	AllowedType string // 允许的api key类型，逗号隔开
 }
 
 func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
+	var p ApikeyAuthParam
+
 	apiKey := out.Ctx.GetHeader(`BIZ-API-KEY`)
 	if apiKey == `` {
 		go_error.ThrowInternal(`auth error. api key not found.`)
@@ -50,13 +50,27 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		go_error.ThrowInternal(`auth error. timestamp not found`)
 	}
 	nowTimestamp := time.Now().UnixNano() / 1e6
-	if nowTimestamp - go_reflect.Reflect.ToInt64(timestamp) > 10 * 60 * 1000 {
+	if nowTimestamp-go_reflect.Reflect.ToInt64(timestamp) > 10*60*1000 {
 		go_error.ThrowInternal(`auth expired`)
 	}
-	apiKeyModel := model.ApiKey{}
-	if notFound := go_mysql.MysqlHelper.RawSelectFirst(&apiKeyModel, fmt.Sprintf(`select * from %s where api_key = ? and deleted_at is null`, apiKeyModel.GetTableName()), apiKey); notFound {
+	apiKeyModel := model.ApiKeyModel.GetByApiKey(apiKey)
+	if apiKeyModel == nil {
 		go_error.ThrowInternal(`auth key error`)
 	}
+	if param != nil {
+		p = param.(ApikeyAuthParam)
+		isAllowed := false
+		for _, v := range strings.Split(p.AllowedType, `,`) {
+			if v == go_reflect.Reflect.ToString(apiKeyModel.Type) {
+				isAllowed = true
+				break
+			}
+		}
+		if !isAllowed {
+			go_error.ThrowInternal(`auth key too small`)
+		}
+	}
+
 	out.UserId = apiKeyModel.UserId
 	realSignature := this.sign(apiKeyModel.ApiSecret, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params)
 	if realSignature != signature {

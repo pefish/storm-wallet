@@ -15,7 +15,7 @@ var WalletSvc = WalletSvcClass{}
 
 func (this *WalletSvcClass) Init(opts ...interface{}) service.InterfaceService {
 	this.SetName(`storm钱包服务api`)
-	this.SetPath(`/api/wallet-storm`)
+	this.SetPath(`/api/storm-wallet`)
 	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
 
 	this.SetRoutes(route.AddressRoute, route.TransactionRoute, route.WithdrawRoute)
