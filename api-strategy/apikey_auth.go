@@ -71,7 +71,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 			}
 		}
 		if !isAllowed {
-			go_error.ThrowInternal(`auth key too small`)
+			go_error.ThrowInternal(`auth key has not enough right`)
 		}
 	}
 	// 检查用户是否被禁用

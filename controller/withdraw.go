@@ -5,6 +5,7 @@ import (
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-decimal"
 	"github.com/pefish/go-error"
+	"github.com/pefish/go-mysql"
 	"github.com/pefish/go-redis"
 	"github.com/satori/go.uuid"
 	"time"
@@ -94,12 +95,26 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		go_error.Throw(`memo is too long`, constant.MEMO_TOO_LONG)
 	}
 
+	tran := go_mysql.MysqlHelper.Begin()
+	defer func() {
+		if err := recover(); err != nil {
+			tran.Rollback()
+			panic(err)
+		} else {
+			tran.Commit()
+		}
+	}()
 	// 判断是否进入审核
 	var status uint64 = 2
 	if go_decimal.Decimal.Start(params.Amount).Lte(userCurrencyModel.WithdrawCheckLimit) {
 		// 直接通过
 		status = 1
+		model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, *params.Memo)
+	} else {
+		id := model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, *params.Memo)
+		// 冻结资产
+		model.BalanceLogModel.Freeze(tran, apiSession.UserId, currencyModel.Id, params.Amount, 1, id)
 	}
-	model.WithdrawModel.Insert(params.RequestId, apiSession.UserId, params.Currency, params.Chain, params.Amount, status, params.Address, *params.Memo)
+
 	return ``
 }

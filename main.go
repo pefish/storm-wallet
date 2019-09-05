@@ -7,11 +7,11 @@ import (
 	"github.com/pefish/go-http"
 	"github.com/pefish/go-logger"
 	"github.com/pefish/go-mysql"
+	"github.com/pefish/go-redis"
 	"os"
 	"runtime/debug"
 	"time"
 	"wallet-storm-wallet/service"
-	"github.com/pefish/go-redis"
 )
 
 func main() {

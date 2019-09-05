@@ -12,8 +12,8 @@ func TestApikeyAuthStrategyClass_sign(t *testing.T) {
 	sig := ApikeyAuthStrategy.sign(`tw2456245twe2`, timestamp, `POST`, `/api/storm-wallet/v1/withdraw`, map[string]interface{}{
 		"currency": "ETH",
 		"chain": "Eth",
-		"request_id": "75673",
-		"address": "dghfghsfjsj",
+		"request_id": "1",
+		"address": "0xfb6d58f5dc77ff06390fe1f30c57e670b555b34a",
 		"amount": "4",
 		"memo": "63562",
 	})
