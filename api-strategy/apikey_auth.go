@@ -3,6 +3,7 @@ package api_strategy
 import (
 	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
+	"github.com/pefish/go-core/util"
 	"github.com/pefish/go-crypto"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-reflect"
@@ -41,6 +42,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	if apiKey == `` {
 		go_error.ThrowInternal(`auth error. api key not found.`)
 	}
+	util.UpdateCtxValuesErrorMsg(out.Ctx, `apiKey`, apiKey)
 	signature := out.Ctx.GetHeader(`BIZ-API-SIGNATURE`)
 	if signature == `` {
 		go_error.ThrowInternal(`auth error. signature not found.`)
@@ -57,6 +59,8 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	if apiKeyModel == nil {
 		go_error.ThrowInternal(`auth key error`)
 	}
+	out.UserId = apiKeyModel.UserId
+	util.UpdateCtxValuesErrorMsg(out.Ctx, `jwtAuth`, apiKeyModel.UserId)
 	if param != nil {
 		p = param.(ApikeyAuthParam)
 		isAllowed := false
@@ -70,8 +74,11 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 			go_error.ThrowInternal(`auth key too small`)
 		}
 	}
-
-	out.UserId = apiKeyModel.UserId
+	// 检查用户是否被禁用
+	userModel := model.UserModel.GetByUserIdIsBanned(apiKeyModel.UserId, false)
+	if userModel == nil {
+		go_error.ThrowInternal(`user is invalid or is baned`)
+	}
 	realSignature := this.sign(apiKeyModel.ApiSecret, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params)
 	if realSignature != signature {
 		go_error.ThrowInternal(`auth signature error.`)

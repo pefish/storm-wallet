@@ -30,6 +30,16 @@ where user_id = ? and series = ? and is_deleted = 0 and address_index = ?
 	return &result
 }
 
+func (this *DepositAddress) GetByUserIdSeriesAddress(userId uint64, series string, address string) *DepositAddress {
+	result := DepositAddress{}
+	if notFound := go_mysql.MysqlHelper.SelectFirstByStr(&result, this.GetTableName(), `*`, `
+where user_id = ? and series = ? and is_deleted = 0 and address = ?
+`, userId, series, address); notFound {
+		return nil
+	}
+	return &result
+}
+
 func (this *DepositAddress) Insert(userId uint64, address string, path string, series string, index uint64) {
 	go_mysql.MysqlHelper.RawExec(
 		`insert into deposit_address (user_id, address, path, series, address_index) values (?,?,?,?,?)`,

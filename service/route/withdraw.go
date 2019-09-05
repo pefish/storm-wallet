@@ -28,7 +28,6 @@ var WithdrawRoute = map[string]*api_channel_builder.Route{
 			RequestId: `hsgfh65`,
 			Address:   `0xfb6d58f5dc77ff06390fe1f30c57e670b555b34a`,
 			Amount:    `0.6`,
-			Memo:      ``,
 		},
 		Controller: controller.WithdrawController.Withdraw,
 		Return: api_channel_builder.ApiResult{

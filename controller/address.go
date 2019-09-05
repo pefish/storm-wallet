@@ -37,7 +37,7 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 	}
 	defer go_redis.RedisHelper.ReleaseLock(lockKey, uniqueId)
 
-	currencyModel := model.UserCurrencyModel.GetCurrencyInfoByCurrencyChain(apiSession.UserId, params.Currency, params.Chain)
+	currencyModel := model.UserCurrencyModel.GetCurrencyOfUserByCurrencyChain(apiSession.UserId, params.Currency, params.Chain)
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
@@ -62,7 +62,15 @@ type ValidateAddressParam struct {
 }
 
 func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiSessionClass) interface{} {
-	return ``
+	params := ValidateAddressParam{}
+	apiSession.ScanParams(&params)
+
+	currencyModel := model.UserCurrencyModel.GetCurrencyOfUserByCurrencyChain(apiSession.UserId, params.Currency, params.Chain)
+	if currencyModel == nil {
+		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
+	}
+	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address)
+	return true
 }
 
 type IsPlatformAddressParam struct {
@@ -72,5 +80,13 @@ type IsPlatformAddressParam struct {
 }
 
 func (this *AddressControllerClass) IsPlatformAddress(apiSession *api_session.ApiSessionClass) interface{} {
-	return ``
+	params := IsPlatformAddressParam{}
+	apiSession.ScanParams(&params)
+
+	currencyModel := model.UserCurrencyModel.GetCurrencyOfUserByCurrencyChain(apiSession.UserId, params.Currency, params.Chain)
+	if currencyModel == nil {
+		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
+	}
+	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesAddress(apiSession.UserId, currencyModel.Series, params.Address)
+	return depositAddressModel != nil
 }

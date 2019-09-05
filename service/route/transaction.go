@@ -20,7 +20,6 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 		},
 		ParamType: api_strategy2.ALL_TYPE,
 		Params: controller.GetDepositTransactionParam{
-			Chain: `Eth`,
 			TxId:  `0xfeaef9adaa8a949f474cd86d573838e370441616c53836f4a19de0db64b73a68`,
 		},
 		Controller: controller.TransactionController.GetDepositTransaction,
@@ -39,7 +38,7 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 					Confirmations: 1,
 					OutputIndex:   0,
 					Tag:           ``,
-					CreatedAt:     ``,
+					CreatedAt:     `2019-09-04T06:41:39Z`,
 				},
 			},
 		},
@@ -56,7 +55,6 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 		},
 		ParamType: api_strategy2.ALL_TYPE,
 		Params: controller.GetWithdrawTransactionParam{
-			Chain: `Eth`,
 			TxId:  `0xfeaef9adaa8a949f474cd86d573838e370441616c53836f4a19de0db64b73a68`,
 		},
 		Controller: controller.TransactionController.GetWithdrawTransaction,
@@ -77,7 +75,7 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 					OutputIndex:   0,
 					Tag:           ``,
 					NetworkFee:    0.0043,
-					CreatedAt:     ``,
+					CreatedAt:     `2019-09-04T06:41:39Z`,
 				},
 			},
 		},

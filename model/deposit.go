@@ -1,5 +1,7 @@
 package model
 
+import "github.com/pefish/go-mysql"
+
 var DepositModel = Deposit{}
 
 type Deposit struct {
@@ -23,4 +25,19 @@ type Deposit struct {
 
 func (this *Deposit) GetTableName() string {
 	return `deposit`
+}
+
+func (this *Deposit) ListByUserIdChainTxIdForStruct(results interface{}, userId uint64, chain string, txId string) {
+	go_mysql.MysqlHelper.Select(results, this.GetTableName(), `*`, map[string]interface{}{
+		`user_id`: userId,
+		`chain`:   chain,
+		`tx_id`:   txId,
+	})
+}
+
+func (this *Deposit) ListByUserIdTxIdForStruct(results interface{}, userId uint64, txId string) {
+	go_mysql.MysqlHelper.Select(results, this.GetTableName(), `*`, map[string]interface{}{
+		`user_id`: userId,
+		`tx_id`:   txId,
+	})
 }

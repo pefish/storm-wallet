@@ -1,6 +1,9 @@
 package controller
 
-import "github.com/pefish/go-core/api-session"
+import (
+	"github.com/pefish/go-core/api-session"
+	"wallet-storm-wallet/model"
+)
 
 type TransactionControllerClass struct {
 }
@@ -8,8 +11,8 @@ type TransactionControllerClass struct {
 var TransactionController = TransactionControllerClass{}
 
 type GetDepositTransactionParam struct {
-	Chain string `json:"chain" validate:"omitempty" desc:"要查询哪条链上的交易"`
-	TxId  string `json:"tx_id" validate:"required" desc:"要查询的tx id"`
+	Chain *string `json:"chain" validate:"omitempty" desc:"要查询哪条链上的交易"`
+	TxId  string  `json:"tx_id" validate:"required" desc:"要查询的tx id"`
 }
 
 type GetDepositTransactionReturn struct {
@@ -29,12 +32,22 @@ type GetDepositTransactionReturn struct {
 }
 
 func (this *TransactionControllerClass) GetDepositTransaction(apiSession *api_session.ApiSessionClass) interface{} {
-	return ``
+	params := GetDepositTransactionParam{}
+	apiSession.ScanParams(&params)
+
+	results := []GetDepositTransactionReturn{}
+	if params.Chain == nil {
+		model.DepositModel.ListByUserIdTxIdForStruct(&results, apiSession.UserId, params.TxId)
+	} else {
+		model.DepositModel.ListByUserIdChainTxIdForStruct(&results, apiSession.UserId, *params.Chain, params.TxId)
+	}
+
+	return results
 }
 
 type GetWithdrawTransactionParam struct {
-	Chain string `json:"chain" validate:"omitempty" desc:"要查询哪条链上的交易"`
-	TxId  string `json:"tx_id" validate:"required" desc:"要查询的tx id"`
+	Chain *string `json:"chain" validate:"omitempty" desc:"要查询哪条链上的交易"`
+	TxId  string  `json:"tx_id" validate:"required" desc:"要查询的tx id"`
 }
 
 type GetWithdrawTransactionReturn struct {
@@ -56,5 +69,15 @@ type GetWithdrawTransactionReturn struct {
 }
 
 func (this *TransactionControllerClass) GetWithdrawTransaction(apiSession *api_session.ApiSessionClass) interface{} {
-	return ``
+	params := GetWithdrawTransactionParam{}
+	apiSession.ScanParams(&params)
+
+	results := []GetWithdrawTransactionReturn{}
+	if params.Chain == nil {
+		model.WithdrawModel.ListByUserIdTxIdForStruct(&results, apiSession.UserId, params.TxId)
+	} else {
+		model.WithdrawModel.ListByUserIdChainTxIdForStruct(&results, apiSession.UserId, *params.Chain, params.TxId)
+	}
+
+	return results
 }
