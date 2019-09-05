@@ -18,4 +18,9 @@ func TestApikeyAuthStrategyClass_sign(t *testing.T) {
 		"memo": "63562",
 	})
 	fmt.Println(timestamp, sig)
+
+	sig1 := ApikeyAuthStrategy.sign(`tw2456245twe2`, timestamp, `GET`, `/api/storm-wallet/v1/balance`, map[string]interface{}{
+
+	})
+	fmt.Println(timestamp, sig1)
 }

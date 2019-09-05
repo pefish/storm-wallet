@@ -58,6 +58,17 @@ from %s where user_id = ? and currency_id = ?
 	return &result
 }
 
+func (this *BalanceLog) ListAllBalanceByUserIdForStruct(results interface{}, userId uint64) {
+	go_mysql.MysqlHelper.RawSelect(results, fmt.Sprintf(`
+select sum(if(a.log_type in (1,2), a.amount, 0)) as avail, sum(if(a.log_type in (3,4), a.amount, 0)) as freeze, b.currency, b.chain
+from %s a
+left join %s b
+on a.currency_id = b.id
+where a.user_id = ?
+group by b.currency, b.chain
+`, this.GetTableName(), CurrencyModel.GetTableName()), userId)
+}
+
 func (this *BalanceLog) Freeze(tran go_mysql.MysqlClass, userId uint64, currencyId uint64, amount string, type_ uint64, refId uint64) {
 	_, num := tran.Insert(this.GetTableName(), map[string]interface{}{
 		`user_id`:     userId,

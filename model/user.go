@@ -8,8 +8,6 @@ var UserModel = User{}
 
 type User struct {
 	Mobile           string `db:"mobile" json:"mobile"`
-	IsDepositEnable  int64  `db:"is_deposit_enable" json:"is_deposit_enable"`
-	IsWithdrawEnable int64  `db:"is_withdraw_enable" json:"is_withdraw_enable"`
 	IsBanned         int64  `db:"is_banned" json:"is_banned"`
 	BaseModel
 }
