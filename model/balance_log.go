@@ -9,10 +9,8 @@ import (
 var BalanceLogModel = BalanceLog{}
 
 var (
-	LogType_BalanceRealAdd uint64 = 1
-	LogType_BalanceRealSub uint64 = 2
-	LogType_FreezeAdd      uint64 = 3
-	LogType_FreezeSub      uint64 = 4
+	LogType_BalanceChange uint64 = 1
+	LogType_FreezeChange  uint64 = 2
 
 	Type_Withdraw uint64 = 1
 	Type_Deposit  uint64 = 2
@@ -43,11 +41,12 @@ func (this *BalanceLog) GetBalanceByUserIdCurrencyId(userId uint64, currencyId u
 	result := Balance{}
 	zero := `0`
 	if notFound := go_mysql.MysqlHelper.RawSelectFirst(&result, fmt.Sprintf(`
-select sum(if(log_type in (1,2), amount, 0)) as avail, sum(if(log_type in (3,4), amount, 0)) as freeze
+select sum(if(log_type = 1, amount, 0)) as avail, sum(if(log_type = 2, amount, 0)) as freeze
 from %s where user_id = ? and currency_id = ?
 `, this.GetTableName()), userId, currencyId); notFound {
 		result.Avail = &zero
 		result.Freeze = &zero
+		return &result
 	}
 	if result.Avail == nil {
 		result.Avail = &zero
@@ -60,7 +59,7 @@ from %s where user_id = ? and currency_id = ?
 
 func (this *BalanceLog) ListAllBalanceByUserIdForStruct(results interface{}, userId uint64) {
 	go_mysql.MysqlHelper.RawSelect(results, fmt.Sprintf(`
-select sum(if(a.log_type in (1,2), a.amount, 0)) as avail, sum(if(a.log_type in (3,4), a.amount, 0)) as freeze, b.currency, b.chain
+select sum(if(a.log_type = 1, a.amount, 0)) as avail, sum(if(a.log_type = 2, a.amount, 0)) as freeze, b.currency, b.chain
 from %s a
 left join %s b
 on a.currency_id = b.id
@@ -73,9 +72,9 @@ func (this *BalanceLog) Freeze(tran go_mysql.MysqlClass, userId uint64, currency
 	_, num := tran.Insert(this.GetTableName(), map[string]interface{}{
 		`user_id`:     userId,
 		`currency_id`: currencyId,
-		`amount`:      `-` + amount,
+		`amount`:      amount,
 		`type`:        type_,
-		`log_type`:    LogType_FreezeAdd,
+		`log_type`:    LogType_FreezeChange,
 		`ref_id`:      refId,
 	})
 	if num == 0 {

@@ -69,7 +69,7 @@ func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiS
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
-	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address)
+	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, ``)
 	return true
 }
 

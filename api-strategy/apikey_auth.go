@@ -1,6 +1,7 @@
 package api_strategy
 
 import (
+	"github.com/pefish/go-application"
 	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-core/util"
@@ -51,9 +52,11 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	if timestamp == `` {
 		go_error.ThrowInternal(`auth error. timestamp not found`)
 	}
-	nowTimestamp := time.Now().UnixNano() / 1e6
-	if nowTimestamp-go_reflect.Reflect.ToInt64(timestamp) > 10*60*1000 {
-		go_error.ThrowInternal(`auth expired`)
+	if !go_application.Application.Debug {
+		nowTimestamp := time.Now().UnixNano() / 1e6
+		if nowTimestamp-go_reflect.Reflect.ToInt64(timestamp) > 10*60*1000 {
+			go_error.ThrowInternal(`auth expired`)
+		}
 	}
 	apiKeyModel := model.ApiKeyModel.GetByApiKey(apiKey)
 	if apiKeyModel == nil {
@@ -98,11 +101,12 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 func (this *ApikeyAuthStrategyClass) sign(secret string, timestamp string, method string, apiPath string, params map[string]interface{}) string {
 	sortedStr := ``
 	var keys []string
-	for k := range params {
-		keys = append(keys, k)
+	for k, v := range params {
+		if v != nil { // nil参数不参与签名
+			keys = append(keys, k)
+		}
 	}
 	sort.Strings(keys)
-
 	for _, k := range keys {
 		sortedStr += k + `=` + go_reflect.Reflect.ToString(params[k]) + `&`
 	}

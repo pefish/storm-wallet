@@ -1,6 +1,9 @@
 package model
 
-import "github.com/pefish/go-mysql"
+import (
+	"errors"
+	"github.com/pefish/go-mysql"
+)
 
 var DepositModel = Deposit{}
 
@@ -40,4 +43,14 @@ func (this *Deposit) ListByUserIdTxIdForStruct(results interface{}, userId uint6
 		`user_id`: userId,
 		`tx_id`:   txId,
 	})
+}
+
+func (this *Deposit) GetByUserIdUuid(result interface{}, userId uint64, uuid string) error {
+	if notFound := go_mysql.MysqlHelper.SelectFirst(result, this.GetTableName(), `*`, map[string]interface{}{
+		`user_id`: userId,
+		`uuid`:    uuid,
+	}); notFound {
+		return errors.New(`not found`)
+	}
+	return nil
 }

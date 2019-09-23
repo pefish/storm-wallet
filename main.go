@@ -35,10 +35,10 @@ func main() {
 	go_application.Application.Debug = env == `local` || env == `dev`
 	if go_application.Application.Debug {
 		loggerInstance := go_logger.Log4goClass{}
-		go_logger.Logger.Init(&loggerInstance, service.WalletSvc.GetName(), `debug`)
+		go_logger.Logger.InitWithLogger(&loggerInstance, service.WalletSvc.GetName(), `debug`)
 	} else {
 		loggerInstance := go_logger.LogrusClass{}
-		go_logger.Logger.Init(&loggerInstance, service.WalletSvc.GetName(), `info`)
+		go_logger.Logger.InitWithLogger(&loggerInstance, service.WalletSvc.GetName(), `info`)
 	}
 
 	// 初始化数据库连接

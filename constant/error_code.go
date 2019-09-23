@@ -17,4 +17,8 @@ const (
 	BALANCE_NOT_ENOUGH       uint64 = 1012 // 余额不足
 	WITHDRAW_LIMIT_DAILY     uint64 = 1013 // 超过单日限额
 	MEMO_TOO_LONG            uint64 = 1014 // memo太长
+	BALANCE_EXCEPTION        uint64 = 1015 // 资产异常
+	ILLEGAL_USER             uint64 = 1016 // 用户非法
+	WITHDRAW_CONFIRM_FAIL    uint64 = 1017 // 提现二次确认失败
+	TX_NOT_FOUND             uint64 = 1018 // 交易没找到
 )

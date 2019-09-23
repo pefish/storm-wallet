@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--tag=gcr.io/$PROJECT_ID/wallet-storm-wallet:$SHORT_SHA', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/wallet-storm-wallet:$SHORT_SHA']
+- name: 'appropriate/curl:latest'
+  args: ['-H', 'Content-Type: application/json',
+         '-X', 'POST', 'https://oapi.dingtalk.com/robot/send?access_token=72596cb1508cc0300879ffc657702ed6dd7e52470fca5a8dd54e9ff08d6579cb',
+         '-d', '{"msgtype": "text", "text": {"content": "wallet-storm-wallet 镜像构建成功！！！wallet-storm-wallet:$SHORT_SHA"}}']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['set', 'image', 'deployment/hz-backend-wallet-storm-wallet', 'wallet-storm-wallet=gcr.io/$PROJECT_ID/wallet-storm-wallet:$SHORT_SHA']
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-c'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=hz'
+- name: 'appropriate/curl:latest'
+  args: ['-H', 'Content-Type: application/json',
+         '-X', 'POST', 'https://oapi.dingtalk.com/robot/send?access_token=72596cb1508cc0300879ffc657702ed6dd7e52470fca5a8dd54e9ff08d6579cb',
+         '-d', '{"msgtype": "text", "text": {"content": "wallet-storm-wallet 部署成功！！！"}}']
+images: ['gcr.io/$PROJECT_ID/wallet-storm-wallet:$SHORT_SHA']

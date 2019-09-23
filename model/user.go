@@ -7,8 +7,9 @@ import (
 var UserModel = User{}
 
 type User struct {
-	Mobile           string `db:"mobile" json:"mobile"`
-	IsBanned         int64  `db:"is_banned" json:"is_banned"`
+	Mobile             string `db:"mobile" json:"mobile"`
+	WithdrawConfirmUrl string `db:"withdraw_confirm_url" json:"withdraw_confirm_url"`
+	IsBanned           int64  `db:"is_banned" json:"is_banned"`
 	BaseModel
 }
 

@@ -25,11 +25,12 @@ func (this *DepositAddressServiceClass) GetBaseUrl() string {
 	return this.baseUrl
 }
 
-func (this *DepositAddressServiceClass) ValidateAddress(series string, address string) {
+func (this *DepositAddressServiceClass) ValidateAddress(series string, address string, memo string) {
 	path := this.apiConfig[`validateAddressPath`].(string)
 	this.driver.PostJson(this.GetBaseUrl()+path, map[string]interface{}{
 		`series`:  series,
 		`address`: address,
+		`memo`:    memo,
 	})
 }
 

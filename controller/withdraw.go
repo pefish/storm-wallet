@@ -5,6 +5,7 @@ import (
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-decimal"
 	"github.com/pefish/go-error"
+	"github.com/pefish/go-http"
 	"github.com/pefish/go-mysql"
 	"github.com/pefish/go-redis"
 	"github.com/satori/go.uuid"
@@ -25,7 +26,7 @@ type WithdrawParam struct {
 	RequestId string  `json:"request_id" validate:"required,max=200" desc:"订单id。此id幂等"`
 	Address   string  `json:"address" validate:"required" desc:"提现的目标地址"`
 	Amount    string  `json:"amount" validate:"required" desc:"提现的数量"`
-	Memo      *string `json:"memo" validate:"omitempty" desc:"memo"`
+	Memo      *string `json:"memo,omitempty" validate:"omitempty" desc:"memo"`
 }
 
 func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSessionClass) interface{} {
@@ -77,7 +78,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 
 	// 检查余额
 	balance := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId, currencyModel.Id)
-	if go_decimal.Decimal.Start(balance.Avail).Lt(params.Amount) {
+	if go_decimal.Decimal.Start(balance.Avail).Sub(balance.Freeze).Lt(params.Amount) {
 		go_error.Throw(`balance not enough`, constant.BALANCE_NOT_ENOUGH)
 	}
 
@@ -88,11 +89,30 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	}
 
 	// 校验目标地址格式是否正确
-	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address)
+	memo := ``
+	if params.Memo != nil {
+		memo = *params.Memo
+	}
+	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
 
 	// 有tag的话，校验tag最大长度
-	if params.Memo != nil && currencyModel.HasTag == 1 && len(*params.Memo) > int(currencyModel.MaxTagLength) {
+	if memo != `` && currencyModel.HasTag == 1 && len(memo) > int(currencyModel.MaxTagLength) {
 		go_error.Throw(`memo is too long`, constant.MEMO_TOO_LONG)
+	}
+
+	// 提现二次确认
+	userModel := model.UserModel.GetByUserIdIsBanned(apiSession.UserId, false)
+	if userModel == nil {
+		go_error.Throw(`invalid user`, constant.ILLEGAL_USER)
+	}
+	httpUtil := go_http.HttpClass{}
+	httpUtil.SetTimeout(5 * time.Second)
+	strResult := httpUtil.PostForString(go_http.RequestParam{
+		Url:    userModel.WithdrawConfirmUrl,
+		Params: params,
+	})
+	if strResult != `ok` {
+		go_error.Throw(`withdraw confirm failed`, constant.WITHDRAW_CONFIRM_FAIL)
 	}
 
 	tran := go_mysql.MysqlHelper.Begin()
@@ -109,9 +129,9 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if go_decimal.Decimal.Start(params.Amount).Lte(userCurrencyModel.WithdrawCheckLimit) {
 		// 直接通过
 		status = 1
-		model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, *params.Memo)
+		model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
 	} else {
-		id := model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, *params.Memo)
+		id := model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
 		// 冻结资产
 		model.BalanceLogModel.Freeze(tran, apiSession.UserId, currencyModel.Id, params.Amount, 1, id)
 	}

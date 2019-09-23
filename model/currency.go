@@ -17,10 +17,10 @@ type Currency struct {
 	WithdrawConfirmation      int64   `db:"withdraw_confirmation" json:"withdraw_confirmation"`
 	Series                    string  `db:"series" json:"series"`
 	WithdrawInoutNum          int64   `db:"withdraw_inout_num" json:"withdraw_inout_num"`
-	NetworkFee                float64 `db:"network_fee" json:"network_fee"`
+	WithdrawNetworkFee        float64 `db:"withdraw_network_fee" json:"withdraw_network_fee"`
+	ScanNetworkFee            float64 `db:"scan_network_fee" json:"scan_network_fee"`
 	ScanInoutNum              int64   `db:"scan_inout_num" json:"scan_inout_num"`
 	HasTag                    int64   `db:"has_tag" json:"has_tag"`
-	IsDepositEnable           int64   `db:"is_deposit_enable" json:"is_deposit_enable"`
 	IsWithdrawEnable          int64   `db:"is_withdraw_enable" json:"is_withdraw_enable"`
 	IsBanned                  int64   `db:"is_banned" json:"is_banned"`
 	MaxTagLength              int64   `db:"max_tag_length" json:"max_tag_length"`
