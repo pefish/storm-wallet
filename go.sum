@@ -71,8 +71,6 @@ github.com/iris-contrib/go.uuid v2.0.0+incompatible h1:XZubAYg61/JwnJNbZilGjf3b3
 github.com/iris-contrib/go.uuid v2.0.0+incompatible/go.mod h1:iz2lgM/1UnEf1kP0L/+fafWORmlnuysV2EMP8MW+qe0=
 github.com/iris-contrib/httpexpect v0.0.0-20180314041918-ebe99fcebbce h1:q8Ka/exfHNgK7izJE+aUOZd7KZXJ7oQbnJWiZakEiMo=
 github.com/iris-contrib/httpexpect v0.0.0-20180314041918-ebe99fcebbce/go.mod h1:VER17o2JZqquOx41avolD/wMGQSFEFBKWmhag9/RQRY=
-github.com/iris-contrib/middleware v0.0.0-20181021162728-8bd5d51b3c2e h1:kj3vB5WsLvahUNG7X6TDRXuYlTNgcZGMFmrd4fmAk6A=
-github.com/iris-contrib/middleware v0.0.0-20181021162728-8bd5d51b3c2e/go.mod h1:lZivVjxn00uQH7vp452Wa2p9GD+2ElkVms944o+f0+Y=
 github.com/jessevdk/go-flags v0.0.0-20141203071132-1679536dcc89/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jmoiron/sqlx v1.2.0 h1:41Ip0zITnmWNR/vHV+S4m+VoUivnWY5E4OJfLZjCJMA=
 github.com/jmoiron/sqlx v1.2.0/go.mod h1:1FEQNm3xlJgrMD+FBdI9+xvCksHtbpVBBw5dYhBSsks=
@@ -143,8 +141,8 @@ github.com/pefish/go-application v0.1.0 h1:xzr+g74pqrwMe1TFTOnBLgSD3nWgFWe7ACGqw
 github.com/pefish/go-application v0.1.0/go.mod h1:bIM667i1fBpkJxZWE0lTbYs/FW4O9YgnW5gj4sy33ko=
 github.com/pefish/go-config v0.0.3 h1:GBRwWcWXNOaVPdGmoChHqU5+7ymB3XQ1via9pwL1bqA=
 github.com/pefish/go-config v0.0.3/go.mod h1:DKVvZlwB0pfrLvcJEmyCqaDAq3CLyhx7K16rxCz7sGo=
-github.com/pefish/go-core v0.3.10 h1:DXKd4+qPhaEyVdluraON7u9Aywzg+6f2gjm2IOrTMuQ=
-github.com/pefish/go-core v0.3.10/go.mod h1:uOistpNKoFZkb+kRjM/Iyt/msM0z569IGa/h6as0vsM=
+github.com/pefish/go-core v0.3.11 h1:Fpgg5K/rsrLobppGweu9OJYPcPj3WDZvsl4PSBIgNLY=
+github.com/pefish/go-core v0.3.11/go.mod h1:CSs3Ckq7kz32opDOD6rIK2tkfZc2oe6bJ8C0N3xL1Fs=
 github.com/pefish/go-crypto v0.1.0 h1:KdWWPan7jwIkuyo3FaFcEeeBz4ELt39kmrY+zaKiTUI=
 github.com/pefish/go-crypto v0.1.0/go.mod h1:ndNwXsm8i3+v2Z8m6BqXMFM8CXR+9SOf2rbCHC3U9/s=
 github.com/pefish/go-decimal v0.1.3 h1:l/H5bMOroqAop9LNva0TjuOf89WwaWrJ98CtKyXCsU4=
@@ -152,8 +150,8 @@ github.com/pefish/go-decimal v0.1.3/go.mod h1:/jabPJOWlQJCvHGm513io0uO/ZRCXpK6vj
 github.com/pefish/go-desensitize v0.0.4 h1:1HpBlntkLwcPjgFk9ImjfYOeUKJ6zY76PEZ1d6C2obo=
 github.com/pefish/go-desensitize v0.0.4/go.mod h1:QsnbRf4QSy4+asVq9A5Gi61bJDWM1xPqSD9ybJGe6xY=
 github.com/pefish/go-error v0.2.0/go.mod h1:J+uA2hCnHSIbZgezmjvmWBizZTnmFhL5hOIXUqfx+BA=
-github.com/pefish/go-error v0.2.2 h1:5TBNKm11Lz4S/LIUQDKh2GpCZxhUjtZVdDp7xF0pl10=
-github.com/pefish/go-error v0.2.2/go.mod h1:J+uA2hCnHSIbZgezmjvmWBizZTnmFhL5hOIXUqfx+BA=
+github.com/pefish/go-error v0.3.3 h1:PE6rQcUpDxCRY7Bh3Cve+Do70tprQqPMVsVwOoFaPaU=
+github.com/pefish/go-error v0.3.3/go.mod h1:J+uA2hCnHSIbZgezmjvmWBizZTnmFhL5hOIXUqfx+BA=
 github.com/pefish/go-file v0.1.0 h1:fInpo+hLKHfAhkZWh63IsCJl/bdko2pZ4hq0AfuARi4=
 github.com/pefish/go-file v0.1.0/go.mod h1:8iLoQZ4UMvslNfHR7+9rrO8tGYpvfIC3DkVV5oq6lxY=
 github.com/pefish/go-format v0.1.0 h1:UALs+nD1x82K6COmV468cmblmGDHz8OyUo2R8Nf0XfI=

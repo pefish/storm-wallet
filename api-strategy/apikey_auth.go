@@ -1,6 +1,7 @@
 package api_strategy
 
 import (
+	"fmt"
 	"github.com/pefish/go-application"
 	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
@@ -74,7 +75,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 			}
 		}
 		if !isAllowed {
-			go_error.ThrowInternal(`auth key has not enough right`)
+			go_error.ThrowInternalWithInternalMsg(`auth key has not enough right`, fmt.Sprintf(`AllowedType: %s`, p.AllowedType))
 		}
 	}
 	// 检查用户是否被禁用
@@ -84,7 +85,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	}
 	realSignature := this.sign(apiKeyModel.ApiSecret, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params)
 	if realSignature != signature {
-		go_error.ThrowInternal(`auth signature error.`)
+		go_error.ThrowInternalWithInternalMsg(`auth signature error.`, fmt.Sprintf(`signature: %s, expected signature: %s`, signature, realSignature))
 	}
 	if apiKeyModel.Ip == `` {
 		return
@@ -95,7 +96,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 			return
 		}
 	}
-	go_error.ThrowInternal(`ip is baned`)
+	go_error.ThrowInternalWithInternalMsg(`ip is baned`, fmt.Sprintf(`ip: %s, expected ip: %s`, apiIp, apiKeyModel.Ip))
 }
 
 func (this *ApikeyAuthStrategyClass) sign(secret string, timestamp string, method string, apiPath string, params map[string]interface{}) string {
