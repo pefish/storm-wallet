@@ -27,7 +27,7 @@ func TestApikeyAuthStrategyClass_sign(t *testing.T) {
 	sig2 := ApikeyAuthStrategy.sign(`tw2456245twe2`, timestamp, `GET`, `/api/storm-wallet/v1/validate-address`, map[string]interface{}{
 		`currency`: `ETH`,
 		`chain`: `Eth`,
-		`address`: `0xfb6d58f5dc77ff06390fe1f30c57e670b555b34a`,
+		`address`: `0xfb6d58f5dc77ff06390fe1f30c57e670b555b34a1`,
 	})
 	fmt.Println(timestamp, sig2)
 }
