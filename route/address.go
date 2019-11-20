@@ -5,6 +5,7 @@ import (
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
+	"wallet-storm-wallet/return-hook"
 )
 
 var AddressRoute = map[string]*api_channel_builder.Route{
@@ -27,7 +28,8 @@ var AddressRoute = map[string]*api_channel_builder.Route{
 			Chain:    `Eth`,
 			Index:    1000,
 		},
-		Controller: controller.AddressController.NewAddress,
+		Controller:     controller.AddressController.NewAddress,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: controller.NewAddressReturn{
 				Address: `0xfb6d58f5dc77ff06390fe1f30c57e670b555b34a`,
@@ -50,7 +52,8 @@ var AddressRoute = map[string]*api_channel_builder.Route{
 			Currency: `ETH`,
 			Chain:    `Eth`,
 		},
-		Controller: controller.AddressController.ValidateAddress,
+		Controller:     controller.AddressController.ValidateAddress,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: true,
 		},
@@ -71,7 +74,8 @@ var AddressRoute = map[string]*api_channel_builder.Route{
 			Currency: `ETH`,
 			Chain:    `Eth`,
 		},
-		Controller: controller.AddressController.IsPlatformAddress,
+		Controller:     controller.AddressController.IsPlatformAddress,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: true,
 		},

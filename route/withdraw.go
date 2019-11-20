@@ -5,6 +5,7 @@ import (
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
+	"wallet-storm-wallet/return-hook"
 )
 
 var WithdrawRoute = map[string]*api_channel_builder.Route{
@@ -29,7 +30,8 @@ var WithdrawRoute = map[string]*api_channel_builder.Route{
 			Address:   `0xfb6d58f5dc77ff06390fe1f30c57e670b555b34a`,
 			Amount:    `0.6`,
 		},
-		Controller: controller.WithdrawController.Withdraw,
+		Controller:     controller.WithdrawController.Withdraw,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: ``,
 		},

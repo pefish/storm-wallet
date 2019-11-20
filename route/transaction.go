@@ -5,6 +5,7 @@ import (
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
+	"wallet-storm-wallet/return-hook"
 )
 
 var TransactionRoute = map[string]*api_channel_builder.Route{
@@ -23,6 +24,7 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 			TxId:  `0xfeaef9adaa8a949f474cd86d573838e370441616c53836f4a19de0db64b73a68`,
 		},
 		Controller: controller.TransactionController.ListDepositTransaction,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: []controller.ListDepositTransactionReturn{
 				{
@@ -58,6 +60,7 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 			TxId:  `0xfeaef9adaa8a949f474cd86d573838e370441616c53836f4a19de0db64b73a68`,
 		},
 		Controller: controller.TransactionController.ListWithdrawTransaction,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: []controller.ListWithdrawTransactionReturn{
 				{

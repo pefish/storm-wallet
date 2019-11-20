@@ -5,6 +5,7 @@ import (
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
+	"wallet-storm-wallet/return-hook"
 )
 
 var UserRoute = map[string]*api_channel_builder.Route{
@@ -20,6 +21,7 @@ var UserRoute = map[string]*api_channel_builder.Route{
 		},
 		ParamType:  api_strategy2.ALL_TYPE,
 		Controller: controller.UserController.ListBalance,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: []controller.ListBalanceReturn{
 				{

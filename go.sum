@@ -134,8 +134,10 @@ github.com/pefish/go-application v0.1.0 h1:xzr+g74pqrwMe1TFTOnBLgSD3nWgFWe7ACGqw
 github.com/pefish/go-application v0.1.0/go.mod h1:bIM667i1fBpkJxZWE0lTbYs/FW4O9YgnW5gj4sy33ko=
 github.com/pefish/go-config v0.1.0 h1:NEuCZWImcEAFVZr363Q+onVpvspQZcCci9D1yyOXkKo=
 github.com/pefish/go-config v0.1.0/go.mod h1:I3g9RGSljzHzZXTmY4m95gwS8SSdxTg4W7g8LH58Ot0=
-github.com/pefish/go-core v0.4.11 h1:agin6o2wk0y6XynXhEtBaLMubCxOa6J+BsNS5YZ2y9o=
-github.com/pefish/go-core v0.4.11/go.mod h1:7VpV35QP4MVtlDMxd2hae7XeM39jrdv5CRm/6yej2E4=
+github.com/pefish/go-core v0.5.1 h1:GpysAmQ48raUdIHt3kr/XkTQf/pR4CofMaf685/G5S4=
+github.com/pefish/go-core v0.5.1/go.mod h1:7VpV35QP4MVtlDMxd2hae7XeM39jrdv5CRm/6yej2E4=
+github.com/pefish/go-core v0.5.2 h1:SFOk8jT9oYh56B2V5t3ZiV5FgN9YzN2gDLeqs/EEy6E=
+github.com/pefish/go-core v0.5.2/go.mod h1:7VpV35QP4MVtlDMxd2hae7XeM39jrdv5CRm/6yej2E4=
 github.com/pefish/go-crypto v0.2.0 h1:h/rQWTm7IIO1QZfntVwxigJD9JTvQAu5k5dVAQaQHWA=
 github.com/pefish/go-crypto v0.2.0/go.mod h1:mqSAP9pi/W9wmhkHImKPpJYlsXXTx9TTqIAlUYVGtTA=
 github.com/pefish/go-decimal v0.2.0 h1:oRe3Q29YdhS7vswFNcprsMYSmwAiwYqyNjUuEw8OMvQ=
@@ -160,8 +162,6 @@ github.com/pefish/go-logger v0.1.13 h1:jt1b1hR6lTLE3f+bju5CL7Z0tsVw8KfLZ9QfqxNPI
 github.com/pefish/go-logger v0.1.13/go.mod h1:gK0RvpsFL+VPfLxj7bmoVOTGfwS2rIJoOLDT/QC/0i8=
 github.com/pefish/go-mysql v0.2.2 h1:GHz0Ymd4m4SVASsZlPMsAotYhI107eRX3J1HJW4Ufz8=
 github.com/pefish/go-mysql v0.2.2/go.mod h1:XOKkY+FNQ7Z8sVfT6zl8lAWpjmYyvtb+wYzFWVh/kG8=
-github.com/pefish/go-random v0.1.0 h1:qti6gAOf0qgryCSBSFRxEIBLp55WN1T1IxFpF2cC+oU=
-github.com/pefish/go-random v0.1.0/go.mod h1:7qo6qbo04YJ2qJU9fotXY5b58yjg142RlpXOA6i+Wys=
 github.com/pefish/go-redis v0.2.0 h1:dj4TzOe0YFsrApxuTBHUKSI24IX4ari8B2UenZ4f9bw=
 github.com/pefish/go-redis v0.2.0/go.mod h1:IdarTLwG1ZVNxhc4ka4V+8QzX9rRouoBlbM5WaqLHBE=
 github.com/pefish/go-reflect v0.1.1 h1:ga1xuOwahhGbu5qwoYNeiaTFhYr60Epmxp74YGMpfPk=

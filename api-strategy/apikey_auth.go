@@ -64,6 +64,8 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		go_error.ThrowInternal(`auth key error`)
 	}
 	out.UserId = apiKeyModel.UserId
+	out.Datas[`apiKey`] = apiKey
+	out.Datas[`apiSecret`] = apiKeyModel.ApiSecret
 	util.UpdateCtxValuesErrorMsg(out.Ctx, `jwtAuth`, apiKeyModel.UserId)
 	if param != nil {
 		p = param.(ApikeyAuthParam)
@@ -87,7 +89,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	if realSignature != signature {
 		go_error.ThrowInternalWithInternalMsg(`auth signature error.`, fmt.Sprintf(`signature: %s, expected signature: %s`, signature, realSignature))
 	}
-	if apiKeyModel.Ip == `` {
+	if apiKeyModel.Ip == `` || apiKeyModel.Ip == `*` {
 		return
 	}
 	apiIp := out.Ctx.RemoteAddr()
