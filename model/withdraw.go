@@ -1,11 +1,9 @@
 package model
 
 import (
-	"errors"
 	"fmt"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-mysql"
-	"github.com/pefish/go-random"
 	"github.com/pefish/go-time"
 )
 
@@ -99,20 +97,9 @@ func (this *Withdraw) Insert(tran go_mysql.MysqlClass, requestId string, userId 
 		`status`:      status,
 		`to_address`:  address,
 		`tag`:         memo,
-		`uuid`:        go_random.Random.GetUniqueIdString(),
 	})
 	if num == 0 {
 		go_error.ThrowInternal(`insert error`)
 	}
 	return uint64(id)
-}
-
-func (this *Withdraw) GetByUserIdUuid(result interface{}, userId uint64, uuid string) error {
-	if notFound := go_mysql.MysqlHelper.SelectFirst(result, this.GetTableName(), `*`, map[string]interface{}{
-		`user_id`: userId,
-		`uuid`:    uuid,
-	}); notFound {
-		return errors.New(`not found`)
-	}
-	return nil
 }
