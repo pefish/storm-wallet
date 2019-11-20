@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"github.com/pefish/go-application"
 	"github.com/pefish/go-config"
+	"github.com/pefish/go-core/api-strategy"
+	"github.com/pefish/go-core/logger"
+	"github.com/pefish/go-core/service"
 	"github.com/pefish/go-http"
 	"github.com/pefish/go-logger"
 	"github.com/pefish/go-mysql"
@@ -11,7 +14,8 @@ import (
 	"os"
 	"runtime/debug"
 	"time"
-	"wallet-storm-wallet/service"
+	"wallet-storm-wallet/constant"
+	"wallet-storm-wallet/route"
 )
 
 func main() {
@@ -24,34 +28,36 @@ func main() {
 		os.Exit(0)
 	}()
 
-	go_config.Config.LoadYamlConfig(go_config.Configuration{})
+	go_config.Config.MustLoadYamlConfig(go_config.Configuration{
+		ConfigEnvName: `GO_CONFIG`,
+		SecretEnvName: `GO_SECRET`,
+	})
 
-	go_http.Http.SetTimeout(20 * time.Second)
+	go_http.Http = go_http.NewHttpRequester(go_http.WithTimeout(20 * time.Second))
 
-	service.WalletSvc.Init().SetHealthyCheck(nil)
 
 	// 处理日志
 	env := go_config.Config.GetString(`env`)
 	go_application.Application.Debug = env == `local` || env == `dev`
-	if go_application.Application.Debug {
-		loggerInstance := go_logger.Log4goClass{}
-		go_logger.Logger.InitWithLogger(&loggerInstance, service.WalletSvc.GetName(), `debug`)
-	} else {
-		loggerInstance := go_logger.LogrusClass{}
-		go_logger.Logger.InitWithLogger(&loggerInstance, service.WalletSvc.GetName(), `info`)
-	}
+	go_logger.Logger.Init(service.Service.GetName(), ``)
+	logger.LoggerDriver.Register(go_logger.Logger)
 
 	// 初始化数据库连接
-	mysqlConfig := go_config.Config.GetMap(`mysql`)
+	mysqlConfig := go_config.Config.MustGetMap(`mysql`)
 	go_mysql.MysqlHelper.ConnectWithMap(mysqlConfig)
 	defer go_mysql.MysqlHelper.Close()
 
 	// 初始化redis连接
-	redisConfig := go_config.Config.GetMap(`redis`)
+	redisConfig := go_config.Config.MustGetMap(`redis`)
 	go_redis.RedisHelper.ConnectWithMap(redisConfig)
 	defer go_redis.RedisHelper.Close()
 
-	service.WalletSvc.SetHost(go_config.Config.GetString(`host`))
-	service.WalletSvc.SetPort(go_config.Config.GetUint64(`port`))
-	service.WalletSvc.Run()
+	service.Service.SetName(`storm钱包服务api`)
+	service.Service.SetPath(`/api/storm-wallet`)
+	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
+
+	service.Service.SetRoutes(route.AddressRoute, route.TransactionRoute, route.WithdrawRoute, route.UserRoute)
+	service.Service.SetHost(go_config.Config.GetString(`host`))
+	service.Service.SetPort(go_config.Config.GetUint64(`port`))
+	service.Service.Run()
 }

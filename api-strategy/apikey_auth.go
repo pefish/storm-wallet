@@ -55,7 +55,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	}
 	if !go_application.Application.Debug {
 		nowTimestamp := time.Now().UnixNano() / 1e6
-		if nowTimestamp-go_reflect.Reflect.ToInt64(timestamp) > 10*60*1000 {
+		if nowTimestamp-go_reflect.Reflect.MustToInt64(timestamp) > 10*60*1000 {
 			go_error.ThrowInternal(`auth expired`)
 		}
 	}
@@ -69,7 +69,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		p = param.(ApikeyAuthParam)
 		isAllowed := false
 		for _, v := range strings.Split(p.AllowedType, `,`) {
-			if v == go_reflect.Reflect.ToString(apiKeyModel.Type) {
+			if v == go_reflect.Reflect.MustToString(apiKeyModel.Type) {
 				isAllowed = true
 				break
 			}
@@ -109,7 +109,7 @@ func (this *ApikeyAuthStrategyClass) sign(secret string, timestamp string, metho
 	}
 	sort.Strings(keys)
 	for _, k := range keys {
-		sortedStr += k + `=` + go_reflect.Reflect.ToString(params[k]) + `&`
+		sortedStr += k + `=` + go_reflect.Reflect.MustToString(params[k]) + `&`
 	}
 	sortedStr = strings.TrimSuffix(sortedStr, `&`)
 	toSignStr := method + `|` + apiPath + `|` + timestamp + `|` + sortedStr

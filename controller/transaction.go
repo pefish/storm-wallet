@@ -2,8 +2,6 @@ package controller
 
 import (
 	"github.com/pefish/go-core/api-session"
-	"github.com/pefish/go-error"
-	"wallet-storm-wallet/constant"
 	"wallet-storm-wallet/model"
 )
 
@@ -48,22 +46,6 @@ func (this *TransactionControllerClass) ListDepositTransaction(apiSession *api_s
 }
 
 
-type GetDepositTransactionParam struct {
-	Uuid  string  `json:"uuid" validate:"required" desc:"要查询的uuid"`
-}
-func (this *TransactionControllerClass) GetDepositTransaction(apiSession *api_session.ApiSessionClass) interface{} {
-	params := GetDepositTransactionParam{}
-	apiSession.ScanParams(&params)
-
-	var result ListDepositTransactionReturn
-	err := model.DepositModel.GetByUserIdUuid(&result, apiSession.UserId, params.Uuid)
-	if err != nil {
-		go_error.Throw(`tx not found`, constant.TX_NOT_FOUND)
-	}
-	return result
-}
-
-
 
 type ListWithdrawTransactionParam struct {
 	Chain *string `json:"chain,omitempty" validate:"omitempty" desc:"要查询哪条链上的交易"`
@@ -100,19 +82,4 @@ func (this *TransactionControllerClass) ListWithdrawTransaction(apiSession *api_
 	}
 
 	return results
-}
-
-type GetWithdrawTransactionParam struct {
-	Uuid  string  `json:"uuid" validate:"required" desc:"要查询的uuid"`
-}
-func (this *TransactionControllerClass) GetWithdrawTransaction(apiSession *api_session.ApiSessionClass) interface{} {
-	params := GetWithdrawTransactionParam{}
-	apiSession.ScanParams(&params)
-
-	var result ListWithdrawTransactionReturn
-	err := model.WithdrawModel.GetByUserIdUuid(&result, apiSession.UserId, params.Uuid)
-	if err != nil {
-		go_error.Throw(`tx not found`, constant.TX_NOT_FOUND)
-	}
-	return result
 }

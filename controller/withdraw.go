@@ -11,8 +11,8 @@ import (
 	"github.com/satori/go.uuid"
 	"time"
 	"wallet-storm-wallet/constant"
+	"wallet-storm-wallet/external-service"
 	"wallet-storm-wallet/model"
-	"wallet-storm-wallet/util"
 )
 
 type WithdrawControllerClass struct {
@@ -93,7 +93,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if params.Memo != nil {
 		memo = *params.Memo
 	}
-	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
+	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
 
 	// 有tag的话，校验tag最大长度
 	if memo != `` && currencyModel.HasTag == 1 && len(memo) > int(currencyModel.MaxTagLength) {
@@ -105,8 +105,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if userModel == nil {
 		go_error.Throw(`invalid user`, constant.ILLEGAL_USER)
 	}
-	httpUtil := go_http.HttpClass{}
-	httpUtil.SetTimeout(5 * time.Second)
+	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(5 * time.Second))
 	strResult := httpUtil.PostForString(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,

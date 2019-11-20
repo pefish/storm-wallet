@@ -8,8 +8,8 @@ import (
 	"github.com/satori/go.uuid"
 	"time"
 	"wallet-storm-wallet/constant"
+	"wallet-storm-wallet/external-service"
 	"wallet-storm-wallet/model"
-	"wallet-storm-wallet/util"
 )
 
 type AddressControllerClass struct {
@@ -48,7 +48,7 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 		}
 	}
 
-	result := util.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId, params.Index)
+	result := external_service.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId, params.Index)
 	model.DepositAddressModel.Insert(apiSession.UserId, result.Address, result.Path, currencyModel.Series, params.Index)
 	return NewAddressReturn{
 		Address: result.Address,
@@ -69,7 +69,7 @@ func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiS
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
-	util.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, ``)
+	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, ``)
 	return true
 }
 

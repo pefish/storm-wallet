@@ -56,7 +56,7 @@ var AddressRoute = map[string]*api_channel_builder.Route{
 		},
 	},
 	`is_platform_address`: {
-		Description: "校验地址是否平台地址",
+		Description: "校验地址是否用户平台地址",
 		Path:        "/v1/is-platform-address",
 		Method:      "GET",
 		Strategies: []api_channel_builder.StrategyRoute{

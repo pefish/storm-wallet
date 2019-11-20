@@ -21,7 +21,6 @@ type Deposit struct {
 	OutputIndex   int64   `db:"output_index" json:"output_index"`
 	Tag           string  `db:"tag" json:"tag"`
 	Mark          string  `db:"mark" json:"mark"`
-	ScanStatus    int64   `db:"scan_status" json:"scan_status"`
 
 	BaseModel
 }
