@@ -124,16 +124,18 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		}
 	}()
 	// 判断是否进入审核
-	var status uint64 = 2
+	var status uint64
+	var id uint64
 	if go_decimal.Decimal.Start(params.Amount).Lte(userCurrencyModel.WithdrawCheckLimit) {
 		// 直接通过
-		status = 1
-		model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
+		status = 3
+		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
 	} else {
-		id := model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
-		// 冻结资产
-		model.BalanceLogModel.Freeze(tran, apiSession.UserId, currencyModel.Id, params.Amount, 1, id)
+		status = 2
+		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
 	}
+	// 冻结资产
+	model.BalanceLogModel.Freeze(tran, apiSession.UserId, currencyModel.Id, params.Amount, 1, id)
 
 	return ``
 }

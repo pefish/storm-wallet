@@ -6,9 +6,9 @@ import (
 	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-core/util"
-	"github.com/pefish/go-crypto"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-reflect"
+	signature2 "github.com/pefish/storm-golang-sdk/signature"
 	"sort"
 	"strings"
 	"time"
@@ -22,11 +22,11 @@ type ApikeyAuthStrategyClass struct {
 var ApikeyAuthStrategy = ApikeyAuthStrategyClass{}
 
 func (this *ApikeyAuthStrategyClass) GetName() string {
-	return `apikey_auth`
+	return `request_auth`
 }
 
 func (this *ApikeyAuthStrategyClass) GetDescription() string {
-	return `对apikey以及签名进行校验`
+	return `对请求的签名进行校验`
 }
 
 func (this *ApikeyAuthStrategyClass) GetErrorCode() uint64 {
@@ -34,22 +34,22 @@ func (this *ApikeyAuthStrategyClass) GetErrorCode() uint64 {
 }
 
 type ApikeyAuthParam struct {
-	AllowedType string // 允许的api key类型，逗号隔开
+	AllowedType string // 允许的key类型，逗号隔开
 }
 
 func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
 	var p ApikeyAuthParam
 
-	apiKey := out.Ctx.GetHeader(`BIZ-API-KEY`)
-	if apiKey == `` {
+	reqPubKey := out.Ctx.GetHeader(`STM-REQ-KEY`)
+	if reqPubKey == `` {
 		go_error.ThrowInternal(`auth error. api key not found.`)
 	}
-	util.UpdateCtxValuesErrorMsg(out.Ctx, `apiKey`, apiKey)
-	signature := out.Ctx.GetHeader(`BIZ-API-SIGNATURE`)
+	util.UpdateCtxValuesErrorMsg(out.Ctx, `reqPubKey`, reqPubKey)
+	signature := out.Ctx.GetHeader(`STM-REQ-SIGNATURE`)
 	if signature == `` {
 		go_error.ThrowInternal(`auth error. signature not found.`)
 	}
-	timestamp := out.Ctx.GetHeader(`BIZ-API-TIMESTAMP`)
+	timestamp := out.Ctx.GetHeader(`STM-REQ-TIMESTAMP`)
 	if timestamp == `` {
 		go_error.ThrowInternal(`auth error. timestamp not found`)
 	}
@@ -59,19 +59,17 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 			go_error.ThrowInternal(`auth expired`)
 		}
 	}
-	apiKeyModel := model.ApiKeyModel.GetByApiKey(apiKey)
-	if apiKeyModel == nil {
+	requestKeyModel := model.RequestKeyModel.GetByPubKey(reqPubKey)
+	if requestKeyModel == nil {
 		go_error.ThrowInternal(`auth key error`)
 	}
-	out.UserId = apiKeyModel.UserId
-	out.Datas[`apiKey`] = apiKey
-	out.Datas[`apiSecret`] = apiKeyModel.ApiSecret
-	util.UpdateCtxValuesErrorMsg(out.Ctx, `jwtAuth`, apiKeyModel.UserId)
+	out.UserId = requestKeyModel.UserId
+	util.UpdateCtxValuesErrorMsg(out.Ctx, `jwtAuth`, requestKeyModel.UserId)
 	if param != nil {
 		p = param.(ApikeyAuthParam)
 		isAllowed := false
 		for _, v := range strings.Split(p.AllowedType, `,`) {
-			if v == go_reflect.Reflect.MustToString(apiKeyModel.Type) {
+			if v == go_reflect.Reflect.MustToString(requestKeyModel.Type) {
 				isAllowed = true
 				break
 			}
@@ -81,27 +79,27 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		}
 	}
 	// 检查用户是否被禁用
-	userModel := model.UserModel.GetByUserIdIsBanned(apiKeyModel.UserId, false)
+	userModel := model.UserModel.GetByUserIdIsBanned(requestKeyModel.UserId, false)
 	if userModel == nil {
 		go_error.ThrowInternal(`user is invalid or is baned`)
 	}
-	realSignature := this.sign(apiKeyModel.ApiSecret, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params)
-	if realSignature != signature {
-		go_error.ThrowInternalWithInternalMsg(`auth signature error.`, fmt.Sprintf(`signature: %s, expected signature: %s`, signature, realSignature))
+
+	if !signature2.VerifySignature(this.structContent(timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params), signature, reqPubKey) {
+		go_error.ThrowInternalWithInternalMsg(`auth signature error.`, fmt.Sprintf(`signature: %s`, signature))
 	}
-	if apiKeyModel.Ip == `` || apiKeyModel.Ip == `*` {
+	if requestKeyModel.Ip == `` || requestKeyModel.Ip == `*` {
 		return
 	}
 	apiIp := out.Ctx.RemoteAddr()
-	for _, ip := range strings.Split(apiKeyModel.Ip, `,`) {
+	for _, ip := range strings.Split(requestKeyModel.Ip, `,`) {
 		if ip == apiIp {
 			return
 		}
 	}
-	go_error.ThrowInternalWithInternalMsg(`ip is baned`, fmt.Sprintf(`ip: %s, expected ip: %s`, apiIp, apiKeyModel.Ip))
+	go_error.ThrowInternalWithInternalMsg(`ip is baned`, fmt.Sprintf(`ip: %s, expected ip: %s`, apiIp, requestKeyModel.Ip))
 }
 
-func (this *ApikeyAuthStrategyClass) sign(secret string, timestamp string, method string, apiPath string, params map[string]interface{}) string {
+func (this *ApikeyAuthStrategyClass) structContent(timestamp string, method string, apiPath string, params map[string]interface{}) string {
 	sortedStr := ``
 	var keys []string
 	for k, v := range params {
@@ -114,6 +112,5 @@ func (this *ApikeyAuthStrategyClass) sign(secret string, timestamp string, metho
 		sortedStr += k + `=` + go_reflect.Reflect.MustToString(params[k]) + `&`
 	}
 	sortedStr = strings.TrimSuffix(sortedStr, `&`)
-	toSignStr := method + `|` + apiPath + `|` + timestamp + `|` + sortedStr
-	return go_crypto.Crypto.HmacSha256ToHex(toSignStr, secret)
+	return method + `|` + apiPath + `|` + timestamp + `|` + sortedStr
 }
