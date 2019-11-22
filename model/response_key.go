@@ -7,10 +7,10 @@ import (
 var ResponseKeyModel = ResponseKey{}
 
 type ResponseKey struct {
-	UserId     uint64 `db:"user_id" json:"user_id"`
-	PublicKey  string `db:"public_key" json:"public_key"`
-	PrivateKey string `db:"private_key" json:"private_key"`
-	IsDeleted  int64  `db:"is_deleted" json:"is_deleted"`
+	UserId     uint64 `json:"user_id"`
+	PublicKey  string `json:"public_key"`
+	PrivateKey string `json:"private_key"`
+	IsDeleted  int64  `json:"is_deleted"`
 	BaseModel
 }
 

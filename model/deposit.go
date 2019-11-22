@@ -7,19 +7,19 @@ import (
 var DepositModel = Deposit{}
 
 type Deposit struct {
-	UserId        uint64  `db:"user_id" json:"user_id"`
-	Currency      string  `db:"currency" json:"currency"`
-	Chain         string  `db:"chain" json:"chain"`
-	Amount        float64 `db:"amount" json:"amount"`
-	Address       string  `db:"address" json:"address"`
-	Status        int64   `db:"status" json:"status"`
-	Height        string  `db:"height" json:"height"`
-	BlockId       string  `db:"block_id" json:"block_id"`
-	TxId          string  `db:"tx_id" json:"tx_id"`
-	Confirmations int64   `db:"confirmations" json:"confirmations"`
-	OutputIndex   int64   `db:"output_index" json:"output_index"`
-	Tag           string  `db:"tag" json:"tag"`
-	Mark          string  `db:"mark" json:"mark"`
+	UserId        uint64  `json:"user_id"`
+	Currency      string  `json:"currency"`
+	Chain         string  `json:"chain"`
+	Amount        float64 `json:"amount"`
+	Address       string  `json:"address"`
+	Status        int64   `json:"status"`
+	Height        string  `json:"height"`
+	BlockId       string  `json:"block_id"`
+	TxId          string  `json:"tx_id"`
+	Confirmations int64   `json:"confirmations"`
+	OutputIndex   int64   `json:"output_index"`
+	Tag           string  `json:"tag"`
+	Mark          string  `json:"mark"`
 
 	BaseModel
 }

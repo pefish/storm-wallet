@@ -19,8 +19,8 @@ var UserRoute = map[string]*api_channel_builder.Route{
 				Disable:  false,
 			},
 		},
-		ParamType:  api_strategy2.ALL_TYPE,
-		Controller: controller.UserController.ListBalance,
+		ParamType:      api_strategy2.ALL_TYPE,
+		Controller:     controller.UserController.ListBalance,
 		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: []controller.ListBalanceReturn{
@@ -33,65 +33,76 @@ var UserRoute = map[string]*api_channel_builder.Route{
 			},
 		},
 	},
-	//`get_user_currencies`: {
-	//	Description: "获取账户所有币种",
-	//	Path:        "/v1/user-currency",
-	//	Method:      "GET",
-	//	Strategies: []api_channel_builder.StrategyRoute{
-	//		{
-	//			Strategy: &api_strategy.ApikeyAuthStrategy,
-	//			Disable:  false,
-	//		},
-	//	},
-	//	ParamType:  api_strategy2.ALL_TYPE,
-	//	Controller: controller.UserController.ListUserCurrency,
-	//	Return: api_channel_builder.ApiResult{
-	//		Data: []controller.ListUserCurrencyReturn{
-	//			WithdrawLimitDaily:    `67372`,
-	//			MaxWithdrawAmount:     `52544`,
-	//			WithdrawCheckLimit:    `73567`,
-	//			Currency:              `ETH`,
-	//			Chain:                 `Eth`,
-	//			ContractAddress:       `0xywtrywhsthy`,
-	//			Decimals:              8,
-	//			min_deposit_amount:    `12`,
-	//			min_withdraw_amount:   `7365`,
-	//			deposit_confirmation:  12,
-	//			withdraw_confirmation: 30,
-	//			network_fee:           `0.66`,
-	//			has_tag:               0,
-	//			max_tag_length:        150,
-	//			is_deposit_enable:     0,
-	//			is_withdraw_enable:    1,
-	//		},
-	//	},
-	//},
-	//`get_user_addresses`: {
-	//	Description: "获取账户充值地址",
-	//	Path:        "/v1/user-address",
-	//	Method:      "GET",
-	//	Strategies: []api_channel_builder.StrategyRoute{
-	//		{
-	//			Strategy: &api_strategy.ApikeyAuthStrategy,
-	//			Disable:  false,
-	//		},
-	//	},
-	//	ParamType: api_strategy2.ALL_TYPE,
-	//	Params: controller.ListUserAddressParam{
-	//		Page:     1,
-	//		Size:     10,
-	//		Chain:    `Eth`,
-	//		Currency: `ETH`,
-	//	},
-	//	Controller: controller.UserController.ListUserAddress,
-	//	Return: api_channel_builder.ApiResult{
-	//		Data: UserAddressReturn{
-	//			List: UserAddressListReturn{
-	//				Address: `0xhdghytwthetyt33y3y`,
-	//				Index:   63562,
-	//			},
-	//			Count: 30,
-	//		},
-	//	},
-	//},
+	`list_user_currencies`: {
+		Description: "获取用户开启的所有币种",
+		Path:        "/v1/user-currencies",
+		Method:      "GET",
+		Strategies: []api_channel_builder.StrategyRoute{
+			{
+				Strategy: &api_strategy.ApikeyAuthStrategy,
+				Disable:  false,
+			},
+		},
+		ParamType:  api_strategy2.ALL_TYPE,
+		Controller: controller.UserController.ListUserCurrencies,
+		Return: api_channel_builder.ApiResult{
+			Data: []controller.ListUserCurrencyReturn{
+				{
+					WithdrawLimitDaily:            200,
+					MaxWithdrawAmount:             100,
+					WithdrawCheckLimit:            100,
+					Currency:                      `ETH`,
+					Chain:                         `Eth`,
+					ContractAddress:               ``,
+					Decimals:                      18,
+					DepositConfirmationThreshold:  12,
+					WithdrawConfirmationThreshold: 30,
+					NetworkFeeCurrency:            `Eth.ETH`,
+					NetworkFeeDecimal:             18,
+					HasTag:                        0,
+					MaxTagLength:                  0,
+					IsWithdrawEnable:              1,
+					IsDepositEnable:               1,
+				},
+			},
+		},
+	},
+	`get_user_currencies`: {
+		Description: "获取用户开启的币种",
+		Path:        "/v1/user-currency",
+		Method:      "GET",
+		Strategies: []api_channel_builder.StrategyRoute{
+			{
+				Strategy: &api_strategy.ApikeyAuthStrategy,
+				Disable:  false,
+			},
+		},
+		ParamType: api_strategy2.ALL_TYPE,
+		Params: controller.GetUserCurrencyParam{
+			Currency: `ETH`,
+			Chain:    `Eth`,
+		},
+		Controller: controller.UserController.GetUserCurrency,
+		Return: api_channel_builder.ApiResult{
+			Data: []controller.ListUserCurrencyReturn{
+				{
+					WithdrawLimitDaily:            200,
+					MaxWithdrawAmount:             100,
+					WithdrawCheckLimit:            100,
+					Currency:                      `ETH`,
+					Chain:                         `Eth`,
+					ContractAddress:               ``,
+					Decimals:                      18,
+					DepositConfirmationThreshold:  12,
+					WithdrawConfirmationThreshold: 30,
+					NetworkFeeCurrency:            `Eth.ETH`,
+					NetworkFeeDecimal:             18,
+					HasTag:                        0,
+					MaxTagLength:                  0,
+					IsWithdrawEnable:              1,
+					IsDepositEnable:               1,
+				},
+			},
+		},
+	},
 }

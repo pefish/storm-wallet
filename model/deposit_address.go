@@ -7,12 +7,12 @@ import (
 var DepositAddressModel = DepositAddress{}
 
 type DepositAddress struct {
-	UserId       uint64 `db:"user_id" json:"user_id"`
-	Address      string `db:"address" json:"address"`
-	Path         string `db:"path" json:"path"`
-	Series       string `db:"series" json:"series"`
-	AddressIndex int64  `db:"address_index" json:"address_index"`
-	IsDeleted    int64  `db:"is_deleted" json:"is_deleted"`
+	UserId       uint64 `json:"user_id"`
+	Address      string `json:"address"`
+	Path         string `json:"path"`
+	Series       string `json:"series"`
+	AddressIndex int64  `json:"address_index"`
+	IsDeleted    int64  `json:"is_deleted"`
 	BaseModel
 }
 

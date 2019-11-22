@@ -66,11 +66,6 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		go_error.Throw(`amount decimal error`, constant.AMOUNT_DECIMAL_ERR)
 	}
 
-	// 校验币种最小提现金额
-	if go_decimal.Decimal.Start(params.Amount).Lt(currencyModel.MinWithdrawAmount) {
-		go_error.Throw(`amount must gte min withdraw amount`, constant.MIN_WITHDRAW_AMOUNT)
-	}
-
 	// 校验用户最大提现金额
 	if go_decimal.Decimal.Start(params.Amount).Gt(userCurrencyModel.MaxWithdrawAmount) {
 		go_error.Throw(`amount must lte max withdraw amount`, constant.USER_MAX_WITHDRAW_AMOUNT)

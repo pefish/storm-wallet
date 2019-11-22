@@ -5,26 +5,25 @@ import "github.com/pefish/go-mysql"
 var CurrencyModel = Currency{}
 
 type Currency struct {
-	Currency                  string  `db:"currency" json:"currency"`
-	Chain                     string  `db:"chain" json:"chain"`
-	ContractAddress           string  `db:"contract_address" json:"contract_address"`
-	Decimals                  int64   `db:"decimals" json:"decimals"`
-	MinDepositAmount          float64 `db:"min_deposit_amount" json:"min_deposit_amount"`
-	MinWithdrawAmount         float64 `db:"min_withdraw_amount" json:"min_withdraw_amount"`
-	ScanLimit                 float64 `db:"scan_limit" json:"scan_limit"`
-	ReservedValue             float64 `db:"reserved_value" json:"reserved_value"`
-	DepositConfirmation       int64   `db:"deposit_confirmation" json:"deposit_confirmation"`
-	WithdrawConfirmation      int64   `db:"withdraw_confirmation" json:"withdraw_confirmation"`
-	Series                    string  `db:"series" json:"series"`
-	WithdrawInoutNum          int64   `db:"withdraw_inout_num" json:"withdraw_inout_num"`
-	NetworkFee                float64 `db:"network_fee" json:"network_fee"`
-	ScanInoutNum              int64   `db:"scan_inout_num" json:"scan_inout_num"`
-	HasTag                    int64   `db:"has_tag" json:"has_tag"`
-	IsWithdrawEnable          int64   `db:"is_withdraw_enable" json:"is_withdraw_enable"`
-	IsBanned                  int64   `db:"is_banned" json:"is_banned"`
-	MaxTagLength              int64   `db:"max_tag_length" json:"max_tag_length"`
-	DefaultWithdrawLimitDaily float64 `db:"default_withdrawlimit_daily" json:"default_withdrawlimit_daily"`
-	DefaultMaxWithdraw        float64 `db:"default_max_withdraw" json:"default_max_withdraw"`
+	Currency                      string  `json:"currency"`
+	Chain                         string  `json:"chain"`
+	ContractAddress               string  `json:"contract_address"`
+	Decimals                      int64   `json:"decimals"`
+	ScanLimit                     float64 `json:"scan_limit"`
+	ReservedValue                 float64 `json:"reserved_value"`
+	DepositConfirmationThreshold  int64   `json:"deposit_confirmation_threshold"`
+	WithdrawConfirmationThreshold int64   `json:"withdraw_confirmation_threshold"`
+	Series                        string  `json:"series"`
+	WithdrawInoutNum              int64   `json:"withdraw_inout_num"`
+	NetworkFee                    float64 `json:"network_fee"`
+	ScanInoutNum                  int64   `json:"scan_inout_num"`
+	HasTag                        int64   `json:"has_tag"`
+	IsWithdrawEnable              int64   `json:"is_withdraw_enable"`
+	IsDepositEnable               int64   `json:"is_deposit_enable"`
+	IsBanned                      int64   `json:"is_banned"`
+	MaxTagLength                  int64   `json:"max_tag_length"`
+	DefaultWithdrawLimitDaily     float64 `json:"default_withdrawlimit_daily"`
+	DefaultMaxWithdraw            float64 `json:"default_max_withdraw"`
 
 	BaseModel
 }

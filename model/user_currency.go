@@ -10,12 +10,12 @@ import (
 var UserCurrencyModel = UserCurrency{}
 
 type UserCurrency struct {
-	UserId             uint64  `db:"user_id" json:"user_id"`
-	CurrencyId         uint64  `db:"currency_id" json:"currency_id"`
-	WithdrawLimitDaily float64 `db:"withdraw_limit_daily" json:"withdraw_limit_daily"`
-	MaxWithdrawAmount  float64 `db:"max_withdraw_amount" json:"max_withdraw_amount"`
-	WithdrawCheckLimit float64 `db:"withdraw_check_limit" json:"withdraw_check_limit"`
-	IsDeleted          int64   `db:"is_deleted" json:"is_deleted"`
+	UserId             uint64  `json:"user_id"`
+	CurrencyId         uint64  `json:"currency_id"`
+	WithdrawLimitDaily float64 `json:"withdraw_limit_daily"`
+	MaxWithdrawAmount  float64 `json:"max_withdraw_amount"`
+	WithdrawCheckLimit float64 `json:"withdraw_check_limit"`
+	IsDeleted          int64   `json:"is_deleted"`
 	BaseModel
 }
 
@@ -47,4 +47,11 @@ func (this *UserCurrency) GetByUserIdCurrencyId(userId uint64, currencyId uint64
 		return nil
 	}
 	return &result
+}
+
+func (this *UserCurrency) ListByUserId(results interface{}, userId uint64) {
+	go_mysql.MysqlHelper.Select(results, this.GetTableName(), `*`, map[string]interface{}{
+		`user_id`:    userId,
+		`is_deleted`: 0,
+	})
 }

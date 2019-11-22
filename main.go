@@ -44,6 +44,7 @@ func main() {
 
 	// 初始化数据库连接
 	mysqlConfig := go_config.Config.MustGetMap(`mysql`)
+	go_mysql.MysqlHelper.SetTagName(`json`)
 	go_mysql.MysqlHelper.ConnectWithMap(mysqlConfig)
 	defer go_mysql.MysqlHelper.Close()
 
@@ -53,7 +54,7 @@ func main() {
 	defer go_redis.RedisHelper.Close()
 
 	service.Service.SetName(`storm钱包服务api`)
-	service.Service.SetPath(`/api/storm-wallet`)
+	service.Service.SetPath(`/api/storm`)
 	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
 
 	service.Service.SetRoutes(route.AddressRoute, route.TransactionRoute, route.WithdrawRoute, route.UserRoute)

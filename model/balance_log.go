@@ -18,12 +18,12 @@ var (
 )
 
 type BalanceLog struct {
-	UserId     uint64  `db:"user_id" json:"user_id"`
-	CurrencyId uint64  `db:"currency_id" json:"currency_id"`
-	Amount     float64 `db:"amount" json:"amount"`
-	Type       int64   `db:"type" json:"type"`
-	LogType    int64   `db:"log_type" json:"log_type"`
-	Ref_id     int64   `db:"ref_id" json:"ref_id"`
+	UserId     uint64  `json:"user_id"`
+	CurrencyId uint64  `json:"currency_id"`
+	Amount     float64 `json:"amount"`
+	Type       int64   `json:"type"`
+	LogType    int64   `json:"log_type"`
+	Ref_id     int64   `json:"ref_id"`
 
 	BaseModel
 }

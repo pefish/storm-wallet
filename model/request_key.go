@@ -7,11 +7,11 @@ import (
 var RequestKeyModel = RequestKey{}
 
 type RequestKey struct {
-	UserId    uint64 `db:"user_id" json:"user_id"`
-	PublicKey string `db:"public_key" json:"public_key"`
-	Ip        string `db:"ip" json:"ip"`
-	Type      int64  `db:"type" json:"type"`
-	IsDeleted int64  `db:"is_deleted" json:"is_deleted"`
+	UserId    uint64 `json:"user_id"`
+	PublicKey string `json:"public_key"`
+	Ip        string `json:"ip"`
+	Type      int64  `json:"type"`
+	IsDeleted int64  `json:"is_deleted"`
 	BaseModel
 }
 
