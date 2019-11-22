@@ -21,4 +21,8 @@ const (
 	ILLEGAL_USER             uint64 = 1016 // 用户非法
 	WITHDRAW_CONFIRM_FAIL    uint64 = 1017 // 提现二次确认失败
 	TX_NOT_FOUND             uint64 = 1018 // 交易没找到
+	CURRENCY_DEPOSIT_BANNED  uint64 = 1008 // 币种充值被禁用
+	ADDRESS_INDEX_TOO_BIG    uint64 = 1009 // 地址索引太大
+	USERID_TOO_BIG           uint64 = 1010 // 用户id太大
+	WALLET_CONFIG_ERROR      uint64 = 1011 // 钱包配置错误
 )

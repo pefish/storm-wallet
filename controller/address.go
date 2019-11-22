@@ -3,8 +3,10 @@ package controller
 import (
 	"fmt"
 	"github.com/pefish/go-core/api-session"
+	"github.com/pefish/go-crypto"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-redis"
+	"github.com/pefish/go-reflect"
 	"github.com/satori/go.uuid"
 	"time"
 	"wallet-storm-wallet/constant"
@@ -20,10 +22,11 @@ var AddressController = AddressControllerClass{}
 type NewAddressParam struct {
 	Currency string `json:"currency" validate:"required" desc:"currency"`
 	Chain    string `json:"chain" validate:"required" desc:"要获取哪条链上的地址"`
-	Index    uint64 `json:"index" validate:"required,max=10000000" desc:"地址索引。索引一样则返回的地址一样"`
+	Index    uint64 `json:"index" validate:"required,max-length=8" desc:"地址索引。索引一样则返回的地址一样"`
 }
 type NewAddressReturn struct {
 	Address string `json:"address"`
+	Tag     string `json:"tag"`
 }
 
 func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessionClass) interface{} {
@@ -41,17 +44,44 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
+	if currencyModel.IsDepositEnable == 0 {
+		go_error.Throw(`currency deposit is not available`, constant.CURRENCY_DEPOSIT_BANNED)
+	}
 	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesIndex(apiSession.UserId, currencyModel.Series, params.Index)
 	if depositAddressModel != nil {
 		return NewAddressReturn{
 			Address: depositAddressModel.Address,
+			Tag:     depositAddressModel.Path,
 		}
 	}
+	// 如果是带有tag的币种，就取热钱包地址，tag使用 位移算法（userid+index）
+	if currencyModel.HasTag == 1 {
+		if params.Index > 99999999 {
+			go_error.Throw(`index is too big`, constant.ADDRESS_INDEX_TOO_BIG)
+		}
+		if apiSession.UserId > 99 { // 1-99的用户才允许取带有tag的地址
+			go_error.Throw(`user id is too big`, constant.USERID_TOO_BIG)
+		}
+		tempTag := go_reflect.Reflect.MustToString(apiSession.UserId) + go_reflect.Reflect.MustToString(params.Index)
+		tag := go_crypto.Crypto.ShiftCryptForInt(5727262753, go_reflect.Reflect.MustToInt64(tempTag))
+		tagStr := go_reflect.Reflect.MustToString(tag)
+		walletConfigModel := model.WalletConfigModel.GetByChainType(currencyModel.Chain, 1)
+		if walletConfigModel == nil {
+			go_error.Throw(`hot wallet config error`, constant.WALLET_CONFIG_ERROR)
+		}
+		model.DepositAddressModel.Insert(apiSession.UserId, walletConfigModel.Address, tagStr, currencyModel.Series, params.Index)
+		return NewAddressReturn{
+			Address: walletConfigModel.Address,
+			Tag: tagStr,
+		}
+	}
+
 
 	result := external_service.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId, params.Index)
 	model.DepositAddressModel.Insert(apiSession.UserId, result.Address, result.Path, currencyModel.Series, params.Index)
 	return NewAddressReturn{
 		Address: result.Address,
+		Tag: ``,
 	}
 }
 
