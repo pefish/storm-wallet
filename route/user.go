@@ -43,8 +43,9 @@ var UserRoute = map[string]*api_channel_builder.Route{
 				Disable:  false,
 			},
 		},
-		ParamType:  api_strategy2.ALL_TYPE,
-		Controller: controller.UserController.ListUserCurrencies,
+		ParamType:      api_strategy2.ALL_TYPE,
+		Controller:     controller.UserController.ListUserCurrencies,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: []controller.ListUserCurrencyReturn{
 				{
@@ -82,7 +83,8 @@ var UserRoute = map[string]*api_channel_builder.Route{
 			Currency: `ETH`,
 			Chain:    `Eth`,
 		},
-		Controller: controller.UserController.GetUserCurrency,
+		Controller:     controller.UserController.GetUserCurrency,
+		ReturnHookFunc: return_hook.ReturnHook,
 		Return: api_channel_builder.ApiResult{
 			Data: []controller.ListUserCurrencyReturn{
 				{
