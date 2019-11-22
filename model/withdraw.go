@@ -64,7 +64,7 @@ func (this *Withdraw) GetByUserIdRequestId(userId uint64, requestId string) *Wit
 }
 
 type WithdrewTotalStruct struct {
-	Sum *string `db:"sum" json:"sum"`
+	Sum *string `json:"sum"`
 }
 
 func (this *Withdraw) GetWithdrewTotalOfToday(userId uint64, currency string, chain string) string {

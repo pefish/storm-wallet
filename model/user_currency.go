@@ -25,7 +25,7 @@ func (this *UserCurrency) GetTableName() string {
 
 func (this *UserCurrency) GetCurrencyOfUserByCurrencyChain(userId uint64, currency string, chain string) *Currency {
 	result := Currency{}
-	select_ := strings.Join(go_reflect.Reflect.GetValuesInTagFromStruct(&result, `db`), `,b.`)
+	select_ := strings.Join(go_reflect.Reflect.GetValuesInTagFromStruct(&result, `json`), `,b.`)
 	if notFound := go_mysql.MysqlHelper.RawSelectFirst(&result, fmt.Sprintf(`
 select b.%s from user_currency a
 left join currency b

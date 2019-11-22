@@ -8,7 +8,7 @@ import (
 
 func main() {
 	service.Service.SetName(`storm钱包服务api`)
-	service.Service.SetPath(`/api/storm-wallet`)
+	service.Service.SetPath(`/api/storm`)
 	service.Service.SetRoutes(route.AddressRoute, route.TransactionRoute, route.WithdrawRoute, route.UserRoute)
 	swagger.GetSwaggerInstance().GeneSwagger(`www.zgtest.club`, `swagger.json`, `json`)
 }
