@@ -22,7 +22,7 @@ var AddressController = AddressControllerClass{}
 type NewAddressParam struct {
 	Currency string `json:"currency" validate:"required" desc:"currency"`
 	Chain    string `json:"chain" validate:"required" desc:"要获取哪条链上的地址"`
-	Index    uint64 `json:"index" validate:"required,max-length=8" desc:"地址索引。索引一样则返回的地址一样"`
+	Index    uint64 `json:"index" validate:"required,max=99999999" desc:"地址索引。索引一样则返回的地址一样"`
 }
 type NewAddressReturn struct {
 	Address string `json:"address"`
