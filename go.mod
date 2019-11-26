@@ -14,6 +14,6 @@ require (
 	github.com/pefish/go-redis v0.2.0
 	github.com/pefish/go-reflect v0.1.1
 	github.com/pefish/go-time v0.1.0
-	github.com/pefish/storm-golang-sdk v0.1.3
+	github.com/pefish/storm-golang-sdk v0.1.6
 	github.com/satori/go.uuid v1.2.0
 )

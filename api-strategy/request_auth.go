@@ -85,7 +85,8 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 	}
 
 	if !signature2.VerifySignature(this.structContent(timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params), signature, reqPubKey) {
-		go_error.ThrowInternalWithInternalMsg(`auth signature error.`, fmt.Sprintf(`signature: %s`, signature))
+		go_error.ThrowInternalWithInternalMsg(`auth signature error.`,
+			fmt.Sprintf("signature: %s, timestamp: %s, method: %s, path: %s, params: %#v", signature, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params))
 	}
 	if requestKeyModel.Ip == `` || requestKeyModel.Ip == `*` {
 		return
