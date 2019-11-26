@@ -10,6 +10,7 @@ type DepositAddress struct {
 	UserId       uint64 `json:"user_id"`
 	Address      string `json:"address"`
 	Path         string `json:"path"`
+	Tag          string `json:"tag"`
 	Series       string `json:"series"`
 	AddressIndex int64  `json:"address_index"`
 	IsDeleted    int64  `json:"is_deleted"`
@@ -40,12 +41,13 @@ where user_id = ? and series = ? and is_deleted = 0 and address = ?
 	return &result
 }
 
-func (this *DepositAddress) Insert(userId uint64, address string, path string, series string, index uint64) {
+func (this *DepositAddress) Insert(userId uint64, address string, path string, series string, index uint64, tag string) {
 	go_mysql.MysqlHelper.RawExec(
-		`insert into deposit_address (user_id, address, path, series, address_index) values (?,?,?,?,?)`,
+		`insert into deposit_address (user_id, address, path, tag, series, address_index) values (?,?,?,?,?,?)`,
 		userId,
 		address,
 		path,
+		tag,
 		series,
 		index,
 	)

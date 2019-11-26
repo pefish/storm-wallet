@@ -49,9 +49,13 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 	}
 	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesIndex(apiSession.UserId, currencyModel.Series, params.Index)
 	if depositAddressModel != nil {
+		tag := ``
+		if currencyModel.HasTag == 1 {
+			tag = depositAddressModel.Tag
+		}
 		return NewAddressReturn{
 			Address: depositAddressModel.Address,
-			Tag:     depositAddressModel.Path,
+			Tag:     tag,
 		}
 	}
 	// 如果是带有tag的币种，就取热钱包地址，tag使用 位移算法（userid+index）
@@ -69,19 +73,18 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 		if walletConfigModel == nil {
 			go_error.Throw(`hot wallet config error`, constant.WALLET_CONFIG_ERROR)
 		}
-		model.DepositAddressModel.Insert(apiSession.UserId, walletConfigModel.Address, tagStr, currencyModel.Series, params.Index)
+		model.DepositAddressModel.Insert(apiSession.UserId, walletConfigModel.Address, ``, currencyModel.Series, params.Index, tagStr)
 		return NewAddressReturn{
 			Address: walletConfigModel.Address,
-			Tag: tagStr,
+			Tag:     tagStr,
 		}
 	}
 
-
 	result := external_service.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId, params.Index)
-	model.DepositAddressModel.Insert(apiSession.UserId, result.Address, result.Path, currencyModel.Series, params.Index)
+	model.DepositAddressModel.Insert(apiSession.UserId, result.Address, result.Path, currencyModel.Series, params.Index, ``)
 	return NewAddressReturn{
 		Address: result.Address,
-		Tag: ``,
+		Tag:     ``,
 	}
 }
 
@@ -89,6 +92,7 @@ type ValidateAddressParam struct {
 	Currency string `json:"currency" validate:"required" desc:"currency"`
 	Chain    string `json:"chain" validate:"required" desc:"要验证哪条链上的地址"`
 	Address  string `json:"address" validate:"required" desc:"address"`
+	Tag      string `json:"tag" desc:"地址标签"`
 }
 
 func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiSessionClass) interface{} {
@@ -99,7 +103,7 @@ func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiS
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
-	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, ``)
+	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, params.Tag)
 	return true
 }
 
