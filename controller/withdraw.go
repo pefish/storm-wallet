@@ -116,8 +116,8 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,
 		Headers: map[string]interface{}{
-			`STM-REQ-SIGNATURE`: sig,
-			`STM-REQ-TIMESTAMP`: timestamp,
+			`STM-RES-SIGNATURE`: sig,
+			`STM-RES-TIMESTAMP`: timestamp,
 		},
 	})
 	if strResult != `ok` {
