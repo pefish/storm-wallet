@@ -1,12 +1,13 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-decimal"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-http"
+	go_json "github.com/pefish/go-json"
+	go_logger "github.com/pefish/go-logger"
 	"github.com/pefish/go-mysql"
 	"github.com/pefish/go-redis"
 	go_reflect "github.com/pefish/go-reflect"
@@ -109,8 +110,10 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if responseKeyModel == nil {
 		go_error.ThrowInternal(` - user do not have response keys.`)
 	}
-	content, _ := json.Marshal(params)
-	sig := signature.SignMessage(string(content)+`|`+timestamp, responseKeyModel.PrivateKey)
+	go_logger.Logger.Debug(`params: `, params)
+	content := go_json.Json.Stringify(params)
+	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
+	go_logger.Logger.DebugF("content: %s, timestamp: %s, sig: %s, privKey: %s\n", content, timestamp, sig, responseKeyModel.PrivateKey[0:5])
 	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(5 * time.Second))
 	strResult := httpUtil.PostForString(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
