@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-decimal"
@@ -8,6 +9,8 @@ import (
 	"github.com/pefish/go-http"
 	"github.com/pefish/go-mysql"
 	"github.com/pefish/go-redis"
+	go_reflect "github.com/pefish/go-reflect"
+	"github.com/pefish/storm-golang-sdk/signature"
 	"github.com/satori/go.uuid"
 	"time"
 	"wallet-storm-wallet/constant"
@@ -100,10 +103,22 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if userModel == nil {
 		go_error.Throw(`invalid user`, constant.ILLEGAL_USER)
 	}
+	// 对提现二次确认请求签名
+	timestamp := go_reflect.Reflect.MustToString(time.Now().UnixNano() / 1e6)
+	responseKeyModel := model.ResponseKeyModel.GetByUserId(apiSession.UserId)
+	if responseKeyModel == nil {
+		go_error.ThrowInternal(` - user do not have response keys.`)
+	}
+	content, _ := json.Marshal(params)
+	sig := signature.SignMessage(string(content)+`|`+timestamp, responseKeyModel.PrivateKey)
 	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(5 * time.Second))
 	strResult := httpUtil.PostForString(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,
+		Headers: map[string]interface{}{
+			`STM-REQ-SIGNATURE`: sig,
+			`STM-REQ-TIMESTAMP`: timestamp,
+		},
 	})
 	if strResult != `ok` {
 		go_error.Throw(`withdraw confirm failed`, constant.WITHDRAW_CONFIRM_FAIL)
