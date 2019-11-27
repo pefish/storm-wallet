@@ -45,8 +45,6 @@ func (this *TransactionControllerClass) ListDepositTransaction(apiSession *api_s
 	return results
 }
 
-
-
 type ListWithdrawTransactionParam struct {
 	Chain *string `json:"chain,omitempty" validate:"omitempty" desc:"要查询哪条链上的交易"`
 	TxId  string  `json:"tx_id" validate:"required" desc:"要查询的tx id"`
@@ -64,7 +62,6 @@ type ListWithdrawTransactionReturn struct {
 	BlockId       string  `json:"block_id"`
 	TxId          string  `json:"tx_id"`
 	Confirmations int64   `json:"confirmations"`
-	OutputIndex   int64   `json:"output_index"`
 	NetworkFee    float64 `json:"network_fee"`
 	Tag           string  `json:"tag"`
 	CreatedAt     string  `json:"created_at"`
