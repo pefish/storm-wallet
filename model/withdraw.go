@@ -24,7 +24,6 @@ type Withdraw struct {
 	TxId          string  `json:"tx_id"`
 	TxHex         *string `json:"tx_hex"`
 	Confirmations int64   `json:"confirmations"`
-	OutputIndex   int64   `json:"output_index"`
 	Nonce         int64   `json:"nonce"`
 	NetworkFee    float64 `json:"network_fee"`
 	Tag           string  `json:"tag"`
