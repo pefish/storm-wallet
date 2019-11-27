@@ -111,9 +111,16 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		go_error.ThrowInternal(` - user do not have response keys.`)
 	}
 	go_logger.Logger.Debug(`params: `, params)
-	content := go_json.Json.Stringify(params)
+	paramsMap := map[string]interface{}{
+		"address":    params.Address,
+		"amount":     params.Amount,
+		"chain":      params.Chain,
+		"currency":   params.Currency,
+		"memo":       memo,
+		"request_id": params.RequestId}
+	content := go_json.Json.Stringify(paramsMap)
 	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
-	go_logger.Logger.DebugF("content: %s, timestamp: %s, sig: %s, privKey: %s\n", content, timestamp, sig, responseKeyModel.PrivateKey[0:5])
+	go_logger.Logger.DebugF("content: %s\n", content)
 	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(5 * time.Second))
 	strResult := httpUtil.PostForString(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
