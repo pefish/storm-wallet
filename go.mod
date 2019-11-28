@@ -9,6 +9,7 @@ require (
 	github.com/pefish/go-decimal v0.2.0
 	github.com/pefish/go-error v0.3.4
 	github.com/pefish/go-http v0.4.0
+	github.com/pefish/go-json v0.1.1
 	github.com/pefish/go-logger v0.1.13
 	github.com/pefish/go-mysql v0.2.2
 	github.com/pefish/go-redis v0.2.0
