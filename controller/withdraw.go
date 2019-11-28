@@ -130,9 +130,24 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 			`STM-RES-TIMESTAMP`: timestamp,
 		},
 	})
+	mark := `ok`
+	errorCount := 0
+	confirmStatus := 3
 	if strResult != `ok` {
+		mark = go_json.Json.Stringify(strResult)
+		errorCount = 1
+		confirmStatus = 4
 		go_error.Throw(`withdraw confirm failed`, constant.WITHDRAW_CONFIRM_FAIL)
 	}
+	go_mysql.MysqlHelper.RawExec(
+		`insert into push_log (user_id,error_count,url,status,type,data, mark) values (?,?,?,?,?,?,?)`,
+		apiSession.UserId,
+		errorCount,
+		userModel.WithdrawConfirmUrl,
+		confirmStatus,
+		3,
+		content,
+		mark)
 
 	tran := go_mysql.MysqlHelper.Begin()
 	defer func() {
