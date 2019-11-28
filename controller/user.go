@@ -24,6 +24,15 @@ func (this *UserControllerClass) ListBalance(apiSession *api_session.ApiSessionC
 	return results
 }
 
+func (this *UserControllerClass) GetCoinBalance(apiSession *api_session.ApiSessionClass) interface{} {
+	params := GetUserCurrencyParam{}
+	apiSession.ScanParams(&params)
+	currencyInfo := model.CurrencyModel.GetIdByCurrencyChain(params.Currency, params.Chain, apiSession.UserId)
+
+	result := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId, currencyInfo.Id)
+	return result
+}
+
 type ListUserCurrencyReturn struct {
 	WithdrawLimitDaily            float64 `json:"withdraw_limit_daily"`
 	MaxWithdrawAmount             float64 `json:"max_withdraw_amount"`

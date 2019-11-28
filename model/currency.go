@@ -34,10 +34,22 @@ func (this *Currency) GetTableName() string {
 
 func (this *Currency) GetByCurrencyChain(currency string, chain string) *Currency {
 	result := Currency{}
-	if notFound := go_mysql.MysqlHelper.SelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlHelper.SelectFirst(&result, this.GetTableName(), `id`, map[string]interface{}{
 		`currency`:  currency,
 		`chain`:     chain,
 		`is_banned`: 0,
+	}); notFound {
+		return nil
+	}
+	return &result
+}
+
+func (this *Currency) GetIdByCurrencyChain(currency string, chain string, userId uint64) *Currency {
+	result := Currency{}
+	if notFound := go_mysql.MysqlHelper.SelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+		`currency`: currency,
+		`chain`:    chain,
+		`user_id`:  userId,
 	}); notFound {
 		return nil
 	}
