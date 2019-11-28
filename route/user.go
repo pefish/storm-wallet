@@ -107,4 +107,28 @@ var UserRoute = map[string]*api_channel_builder.Route{
 			},
 		},
 	},
+	`get_coin_balance`: {
+		Description: "获取账户指定币种余额",
+		Path:        "/v1/coin-balance",
+		Method:      "GET",
+		Strategies: []api_channel_builder.StrategyRoute{
+			{
+				Strategy: &api_strategy.ApikeyAuthStrategy,
+				Disable:  false,
+			},
+		},
+		ParamType:      api_strategy2.ALL_TYPE,
+		Controller:     controller.UserController.GetCoinBalance,
+		ReturnHookFunc: return_hook.ReturnHook,
+		Return: api_channel_builder.ApiResult{
+			Data: []controller.ListBalanceReturn{
+				{
+					Currency: `ETH`,
+					Chain:    `Eth`,
+					Avail:    `73`,
+					Freeze:   `7`,
+				},
+			},
+		},
+	},
 }
