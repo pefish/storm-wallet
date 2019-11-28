@@ -44,12 +44,11 @@ func (this *Currency) GetByCurrencyChain(currency string, chain string) *Currenc
 	return &result
 }
 
-func (this *Currency) GetIdByCurrencyChain(currency string, chain string, userId uint64) *Currency {
+func (this *Currency) GetIdByCurrencyChain(currency, chain string) *Currency {
 	result := Currency{}
 	if notFound := go_mysql.MysqlHelper.SelectFirst(&result, this.GetTableName(), `id`, map[string]interface{}{
 		`currency`: currency,
 		`chain`:    chain,
-		`user_id`:  userId,
 	}); notFound {
 		return nil
 	}

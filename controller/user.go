@@ -27,7 +27,7 @@ func (this *UserControllerClass) ListBalance(apiSession *api_session.ApiSessionC
 func (this *UserControllerClass) GetCoinBalance(apiSession *api_session.ApiSessionClass) interface{} {
 	params := GetUserCurrencyParam{}
 	apiSession.ScanParams(&params)
-	currencyInfo := model.CurrencyModel.GetIdByCurrencyChain(params.Currency, params.Chain, apiSession.UserId)
+	currencyInfo := model.CurrencyModel.GetIdByCurrencyChain(params.Currency, params.Chain)
 
 	result := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId, currencyInfo.Id)
 	return result
