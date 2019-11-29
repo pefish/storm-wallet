@@ -31,11 +31,11 @@ where user_id = ? and series = ? and is_deleted = 0 and address_index = ?
 	return &result
 }
 
-func (this *DepositAddress) GetByUserIdSeriesAddress(userId uint64, series string, address string) *DepositAddress {
+func (this *DepositAddress) GetByUserIdSeriesAddress(userId uint64, series, address, tag string) *DepositAddress {
 	result := DepositAddress{}
 	if notFound := go_mysql.MysqlHelper.SelectFirstByStr(&result, this.GetTableName(), `*`, `
-where user_id = ? and series = ? and is_deleted = 0 and address = ?
-`, userId, series, address); notFound {
+where user_id = ? and series = ? and is_deleted = 0 and address = ? and tag = ?
+`, userId, series, address, tag); notFound {
 		return nil
 	}
 	return &result
