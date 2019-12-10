@@ -84,9 +84,9 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		go_error.ThrowInternal(`user is invalid or is baned`)
 	}
 
-	if !signature2.VerifySignature(this.structContent(timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params), signature, reqPubKey) {
+	if !signature2.VerifySignature(this.structContent(timestamp, out.Ctx.Method(), out.Ctx.Path(), out.OriginalParams), signature, reqPubKey) {
 		go_error.ThrowInternalWithInternalMsg(`auth signature error.`,
-			fmt.Sprintf("signature: %s, timestamp: %s, method: %s, path: %s, params: %#v", signature, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.Params))
+			fmt.Sprintf("signature: %s, timestamp: %s, method: %s, path: %s, params: %#v", signature, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.OriginalParams))
 	}
 	if requestKeyModel.Ip == `` || requestKeyModel.Ip == `*` {
 		return
