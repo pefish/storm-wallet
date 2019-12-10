@@ -89,10 +89,10 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 }
 
 type ValidateAddressParam struct {
-	Currency string `json:"currency" validate:"required" desc:"currency"`
-	Chain    string `json:"chain" validate:"required" desc:"要验证哪条链上的地址"`
-	Address  string `json:"address" validate:"required" desc:"address"`
-	Tag      string `json:"tag" desc:"地址标签"`
+	Currency string  `json:"currency" validate:"required" desc:"currency"`
+	Chain    string  `json:"chain" validate:"required" desc:"要验证哪条链上的地址"`
+	Address  string  `json:"address" validate:"required" desc:"address"`
+	Tag      *string `json:"tag,omitempty" validate:"omitempty" desc:"memo"`
 }
 
 func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiSessionClass) interface{} {
@@ -103,14 +103,19 @@ func (this *AddressControllerClass) ValidateAddress(apiSession *api_session.ApiS
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
-	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, params.Tag)
+	memo := ``
+	if params.Tag != nil {
+		memo = *params.Tag
+	}
+	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
 	return true
 }
 
 type IsPlatformAddressParam struct {
-	Currency string `json:"currency" validate:"required" desc:"currency"`
-	Chain    string `json:"chain" validate:"required" desc:"要查询哪条链上的地址"`
-	Address  string `json:"address" validate:"required" desc:"address"`
+	Currency string  `json:"currency" validate:"required" desc:"currency"`
+	Chain    string  `json:"chain" validate:"required" desc:"要查询哪条链上的地址"`
+	Address  string  `json:"address" validate:"required" desc:"address"`
+	Tag      *string `json:"tag,omitempty" validate:"omitempty" desc:"memo"`
 }
 
 func (this *AddressControllerClass) IsPlatformAddress(apiSession *api_session.ApiSessionClass) interface{} {
@@ -121,6 +126,10 @@ func (this *AddressControllerClass) IsPlatformAddress(apiSession *api_session.Ap
 	if currencyModel == nil {
 		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
 	}
-	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesAddress(apiSession.UserId, currencyModel.Series, params.Address)
+	memo := ``
+	if params.Tag != nil {
+		memo = *params.Tag
+	}
+	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesAddress(apiSession.UserId, currencyModel.Series, params.Address, memo)
 	return depositAddressModel != nil
 }
