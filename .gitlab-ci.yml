@@ -1,0 +1,54 @@
+image: docker:18-git
+
+#services:
+#  - docker:18-dind
+
+stages:
+  - build
+  - build_send
+  - deploy
+  - deploy_send
+
+variables:
+  IMAGE_NAME: gcr.io/$GCP_PROJECT/wallet-storm-wallet
+#  DOCKER_DRIVER: overlay2
+#  DOCKER_HOST: tcp://localhost:2375
+
+build:
+  stage: build
+  script:
+    - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
+    - docker build  -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  only:
+    - master
+
+deploy_to_k8s:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  script:
+    - kubectl --kubeconfig="$KUBE_CONFIG" -n default set image deployment/hz-backend-wallet-storm-wallet wallet-storm-wallet=$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  only:
+    - master
+
+build_send_dingding:
+  stage: build_send
+  image:
+    name: gcr.io/cloud-builders/curl
+    entrypoint: [""]
+  script:
+    - curl -X POST -H "Content-Type:application/json" https://oapi.dingtalk.com/robot/send?access_token=72596cb1508cc0300879ffc657702ed6dd7e52470fca5a8dd54e9ff08d6579cb -d "{\"msgtype\":\"text\", \"text\":{\"content\":\"wallet-storm-wallet 镜像构建成功！！！ $CI_COMMIT_SHORT_SHA\"}}"
+  only:
+    - master
+
+deploy_send_dingding:
+  stage: deploy_send
+  image:
+    name: gcr.io/cloud-builders/curl
+    entrypoint: [""]
+  script:
+    - curl -X POST -H "Content-Type:application/json" https://oapi.dingtalk.com/robot/send?access_token=72596cb1508cc0300879ffc657702ed6dd7e52470fca5a8dd54e9ff08d6579cb -d "{\"msgtype\":\"text\", \"text\":{\"content\":\"wallet-storm-wallet 部署成功！！！\"}}"
+  only:
+    - master
