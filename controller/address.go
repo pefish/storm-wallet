@@ -2,16 +2,17 @@ package controller
 
 import (
 	"fmt"
-	"github.com/pefish/go-core/api-session"
-	"github.com/pefish/go-crypto"
-	"github.com/pefish/go-error"
-	"github.com/pefish/go-redis"
-	"github.com/pefish/go-reflect"
-	"github.com/satori/go.uuid"
 	"time"
 	"wallet-storm-wallet/constant"
-	"wallet-storm-wallet/external-service"
+	external_service "wallet-storm-wallet/external-service"
 	"wallet-storm-wallet/model"
+
+	api_session "github.com/pefish/go-core/api-session"
+	go_crypto "github.com/pefish/go-crypto"
+	go_error "github.com/pefish/go-error"
+	go_redis "github.com/pefish/go-redis"
+	go_reflect "github.com/pefish/go-reflect"
+	uuid "github.com/satori/go.uuid"
 )
 
 type AddressControllerClass struct {
@@ -81,6 +82,9 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 	}
 
 	result := external_service.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId, params.Index)
+	if result.Address == `` {
+		go_error.Throw(`address service return a null address`, constant.ILLEGAL_ADDRESS)
+	}
 	model.DepositAddressModel.Insert(apiSession.UserId, result.Address, result.Path, currencyModel.Series, params.Index, ``)
 	return NewAddressReturn{
 		Address: result.Address,
