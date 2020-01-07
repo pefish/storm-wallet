@@ -2,21 +2,22 @@ package controller
 
 import (
 	"fmt"
-	"github.com/pefish/go-core/api-session"
-	"github.com/pefish/go-decimal"
-	"github.com/pefish/go-error"
-	"github.com/pefish/go-http"
-	go_json "github.com/pefish/go-json"
-	go_logger "github.com/pefish/go-logger"
-	"github.com/pefish/go-mysql"
-	"github.com/pefish/go-redis"
-	go_reflect "github.com/pefish/go-reflect"
-	"github.com/pefish/storm-golang-sdk/signature"
-	"github.com/satori/go.uuid"
 	"time"
 	"wallet-storm-wallet/constant"
-	"wallet-storm-wallet/external-service"
+	external_service "wallet-storm-wallet/external-service"
 	"wallet-storm-wallet/model"
+
+	api_session "github.com/pefish/go-core/api-session"
+	go_decimal "github.com/pefish/go-decimal"
+	go_error "github.com/pefish/go-error"
+	go_http "github.com/pefish/go-http"
+	go_json "github.com/pefish/go-json"
+	go_logger "github.com/pefish/go-logger"
+	go_mysql "github.com/pefish/go-mysql"
+	go_redis "github.com/pefish/go-redis"
+	go_reflect "github.com/pefish/go-reflect"
+	"github.com/pefish/storm-golang-sdk/signature"
+	uuid "github.com/satori/go.uuid"
 )
 
 type WithdrawControllerClass struct {
@@ -145,7 +146,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		errorCount,
 		userModel.WithdrawConfirmUrl,
 		confirmStatus,
-		3,
+		2,
 		content,
 		mark)
 
@@ -161,7 +162,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	// 判断是否进入审核
 	var status uint64
 	var id uint64
-	if go_decimal.Decimal.Start(params.Amount).Lte(userCurrencyModel.WithdrawCheckLimit) {
+	if go_decimal.Decimal.Start(params.Amount).Lte(userCurrencyModel.WithdrawCheckLimit) || go_decimal.Decimal.Start(userCurrencyModel.WithdrawCheckLimit).Eq(-1) {
 		// 直接通过
 		status = 3
 		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
