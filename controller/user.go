@@ -53,7 +53,7 @@ type ListUserCurrencyReturn struct {
 
 func (this *UserControllerClass) ListUserCurrencies(apiSession *api_session.ApiSessionClass) interface{} {
 	var results []ListUserCurrencyReturn
-	go_mysql.MysqlHelper.RawSelect(&results, `
+	go_mysql.MysqlHelper.MustRawSelect(&results, `
 select
 a.withdraw_limit_daily,a.max_withdraw_amount,a.withdraw_check_limit,
 b.currency,b.chain,b.contract_address,b.decimals,b.deposit_confirmation_threshold,b.withdraw_confirmation_threshold,
@@ -75,7 +75,7 @@ func (this *UserControllerClass) GetUserCurrency(apiSession *api_session.ApiSess
 	var param GetUserCurrencyParam
 	apiSession.ScanParams(&param)
 	var result ListUserCurrencyReturn
-	go_mysql.MysqlHelper.RawSelectFirst(&result, `
+	go_mysql.MysqlHelper.MustRawSelectFirst(&result, `
 select
 a.withdraw_limit_daily,a.max_withdraw_amount,a.withdraw_check_limit,
 b.currency,b.chain,b.contract_address,b.decimals,b.deposit_confirmation_threshold,b.withdraw_confirmation_threshold,

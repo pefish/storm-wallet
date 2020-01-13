@@ -2,20 +2,22 @@ package main
 
 import (
 	"fmt"
-	"github.com/pefish/go-application"
-	"github.com/pefish/go-config"
-	"github.com/pefish/go-core/api-strategy"
-	"github.com/pefish/go-core/logger"
-	"github.com/pefish/go-core/service"
-	"github.com/pefish/go-http"
-	"github.com/pefish/go-logger"
-	"github.com/pefish/go-mysql"
-	"github.com/pefish/go-redis"
 	"os"
 	"runtime/debug"
 	"time"
 	"wallet-storm-wallet/constant"
 	"wallet-storm-wallet/route"
+	"wallet-storm-wallet/route/private/team-admin"
+
+	go_application "github.com/pefish/go-application"
+	go_config "github.com/pefish/go-config"
+	api_strategy "github.com/pefish/go-core/api-strategy"
+	"github.com/pefish/go-core/logger"
+	"github.com/pefish/go-core/service"
+	go_http "github.com/pefish/go-http"
+	go_logger "github.com/pefish/go-logger"
+	go_mysql "github.com/pefish/go-mysql"
+	go_redis "github.com/pefish/go-redis"
 )
 
 func main() {
@@ -35,7 +37,6 @@ func main() {
 
 	go_http.Http = go_http.NewHttpRequester(go_http.WithTimeout(20 * time.Second))
 
-
 	// 处理日志
 	env := go_config.Config.GetString(`env`)
 	go_application.Application.Debug = env == `local` || env == `dev`
@@ -44,8 +45,7 @@ func main() {
 
 	// 初始化数据库连接
 	mysqlConfig := go_config.Config.MustGetMap(`mysql`)
-	go_mysql.MysqlHelper.SetTagName(`json`)
-	go_mysql.MysqlHelper.ConnectWithMap(mysqlConfig)
+	go_mysql.MysqlHelper.MustConnectWithMap(mysqlConfig)
 	defer go_mysql.MysqlHelper.Close()
 
 	// 初始化redis连接
@@ -57,7 +57,13 @@ func main() {
 	service.Service.SetPath(`/api/storm`)
 	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
 
-	service.Service.SetRoutes(route.AddressRoute, route.TransactionRoute, route.WithdrawRoute, route.UserRoute)
+	service.Service.SetRoutes(
+		route.AddressRoute,
+		route.TransactionRoute,
+		route.WithdrawRoute,
+		route.UserRoute,
+		team_admin.MemberRoute,
+		)
 	service.Service.SetHost(go_config.Config.GetString(`host`))
 	service.Service.SetPort(go_config.Config.GetUint64(`port`))
 	service.Service.Run()

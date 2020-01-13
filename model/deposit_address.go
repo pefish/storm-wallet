@@ -23,7 +23,7 @@ func (this *DepositAddress) GetTableName() string {
 
 func (this *DepositAddress) GetByUserIdSeriesIndex(userId uint64, series string, index uint64) *DepositAddress {
 	result := DepositAddress{}
-	if notFound := go_mysql.MysqlHelper.SelectFirstByStr(&result, this.GetTableName(), `*`, `
+	if notFound := go_mysql.MysqlHelper.MustSelectFirstByStr(&result, this.GetTableName(), `*`, `
 where user_id = ? and series = ? and is_deleted = 0 and address_index = ?
 `, userId, series, index); notFound {
 		return nil
@@ -33,7 +33,7 @@ where user_id = ? and series = ? and is_deleted = 0 and address_index = ?
 
 func (this *DepositAddress) GetByUserIdSeriesAddress(userId uint64, series, address, tag string) *DepositAddress {
 	result := DepositAddress{}
-	if notFound := go_mysql.MysqlHelper.SelectFirstByStr(&result, this.GetTableName(), `*`, `
+	if notFound := go_mysql.MysqlHelper.MustSelectFirstByStr(&result, this.GetTableName(), `*`, `
 where user_id = ? and series = ? and is_deleted = 0 and address = ? and tag = ?
 `, userId, series, address, tag); notFound {
 		return nil
@@ -42,7 +42,7 @@ where user_id = ? and series = ? and is_deleted = 0 and address = ? and tag = ?
 }
 
 func (this *DepositAddress) Insert(userId uint64, address string, path string, series string, index uint64, tag string) {
-	go_mysql.MysqlHelper.RawExec(
+	go_mysql.MysqlHelper.MustRawExec(
 		`insert into deposit_address (user_id, address, path, tag, series, address_index) values (?,?,?,?,?,?)`,
 		userId,
 		address,

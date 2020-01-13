@@ -25,4 +25,5 @@ const (
 	ADDRESS_INDEX_TOO_BIG    uint64 = 1009 // 地址索引太大
 	USERID_TOO_BIG           uint64 = 1010 // 用户id太大
 	WALLET_CONFIG_ERROR      uint64 = 1011 // 钱包配置错误
+	ILLEGAL_MEMBER           uint64 = 1012 // 成员非法
 )

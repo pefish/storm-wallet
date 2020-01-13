@@ -4,22 +4,22 @@ import (
 	"github.com/pefish/go-mysql"
 )
 
-var UserModel = User{}
+var TeamModel = Team{}
 
-type User struct {
+type Team struct {
 	Mobile             string `json:"mobile"`
 	WithdrawConfirmUrl string `json:"withdraw_confirm_url"`
 	IsBanned           int64  `json:"is_banned"`
 	BaseModel
 }
 
-func (this *User) GetTableName() string {
+func (this *Team) GetTableName() string {
 	return `user`
 }
 
-func (this *User) GetByUserIdIsBanned(userId uint64, isBanned bool) *User {
-	result := User{}
-	if notFound := go_mysql.MysqlHelper.SelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+func (this *Team) GetByUserIdIsBanned(userId uint64, isBanned bool) *Team {
+	result := Team{}
+	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`is_banned`: func(isBanned bool) int {
 			if isBanned {
 				return 1

@@ -101,7 +101,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	}
 
 	// 提现二次确认
-	userModel := model.UserModel.GetByUserIdIsBanned(apiSession.UserId, false)
+	userModel := model.TeamModel.GetByUserIdIsBanned(apiSession.UserId, false)
 	if userModel == nil {
 		go_error.Throw(`invalid user`, constant.ILLEGAL_USER)
 	}
@@ -137,7 +137,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		mark = go_json.Json.Stringify(strResult)
 		confirmStatus = 3
 	}
-	go_mysql.MysqlHelper.RawExec(
+	go_mysql.MysqlHelper.MustRawExec(
 		`insert into push_log (user_id,error_count,url,status,type,data, mark) values (?,?,?,?,?,?,?)`,
 		apiSession.UserId,
 		0,
@@ -149,13 +149,13 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if strResult != `ok` {
 		go_error.Throw(`withdraw confirm failed`, constant.WITHDRAW_CONFIRM_FAIL)
 	}
-	tran := go_mysql.MysqlHelper.Begin()
+	tran := go_mysql.MysqlHelper.MustBegin()
 	defer func() {
 		if err := recover(); err != nil {
-			tran.Rollback()
+			tran.MustRollback()
 			panic(err)
 		} else {
-			tran.Commit()
+			tran.MustCommit()
 		}
 	}()
 	// 判断是否进入审核

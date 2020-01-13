@@ -20,7 +20,7 @@ func (this *ResponseKey) GetTableName() string {
 
 func (this *ResponseKey) GetByUserId(userId uint64) *ResponseKey {
 	responseKeyModel := ResponseKey{}
-	if notFound := go_mysql.MysqlHelper.SelectFirst(&responseKeyModel, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&responseKeyModel, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`:    userId,
 		`is_deleted`: 0,
 	}); notFound {

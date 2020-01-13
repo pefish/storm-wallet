@@ -37,7 +37,7 @@ func (this *Withdraw) GetTableName() string {
 }
 
 func (this *Withdraw) ListByUserIdChainTxIdForStruct(results interface{}, userId uint64, chain string, txId string) {
-	go_mysql.MysqlHelper.Select(results, this.GetTableName(), `*`, map[string]interface{}{
+	go_mysql.MysqlHelper.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`: userId,
 		`chain`:   chain,
 		`tx_id`:   txId,
@@ -45,7 +45,7 @@ func (this *Withdraw) ListByUserIdChainTxIdForStruct(results interface{}, userId
 }
 
 func (this *Withdraw) ListByUserIdTxIdForStruct(results interface{}, userId uint64, txId string) {
-	go_mysql.MysqlHelper.Select(results, this.GetTableName(), `*`, map[string]interface{}{
+	go_mysql.MysqlHelper.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`: userId,
 		`tx_id`:   txId,
 	})
@@ -53,7 +53,7 @@ func (this *Withdraw) ListByUserIdTxIdForStruct(results interface{}, userId uint
 
 func (this *Withdraw) GetByUserIdRequestId(userId uint64, requestId string) *Withdraw {
 	result := Withdraw{}
-	if notFound := go_mysql.MysqlHelper.SelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`:    userId,
 		`request_id`: requestId,
 	}); notFound {
@@ -70,7 +70,7 @@ func (this *Withdraw) GetWithdrewTotalOfToday(userId uint64, currency string, ch
 	beginOfTodayTime := go_time.Time.GetFormatTimeFromTimeObj(go_time.Time.GetLocalBeginTimeOfToday(), `0000-00-00 00:00:00`)
 	endOfTodayTime := go_time.Time.GetFormatTimeFromTimeObj(go_time.Time.GetLocalEndTimeOfToday(), `0000-00-00 00:00:00`)
 	sumStruct := WithdrewTotalStruct{}
-	go_mysql.MysqlHelper.RawSelectFirst(&sumStruct, fmt.Sprintf(`
+	go_mysql.MysqlHelper.MustRawSelectFirst(&sumStruct, fmt.Sprintf(`
 select sum(amount) as sum 
 from %s 
 where 
@@ -85,8 +85,8 @@ where
 	return *sumStruct.Sum
 }
 
-func (this *Withdraw) Insert(tran go_mysql.MysqlClass, requestId string, userId uint64, currencyId uint64, currency string, chain string, amount string, status uint64, address string, memo string) uint64 {
-	id, num := tran.Insert(this.GetTableName(), map[string]interface{}{
+func (this *Withdraw) Insert(tran *go_mysql.MysqlClass, requestId string, userId uint64, currencyId uint64, currency string, chain string, amount string, status uint64, address string, memo string) uint64 {
+	id, num := tran.MustInsert(this.GetTableName(), map[string]interface{}{
 		`request_id`:  requestId,
 		`user_id`:     userId,
 		`currency_id`: currencyId,

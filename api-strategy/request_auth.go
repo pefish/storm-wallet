@@ -79,7 +79,7 @@ func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, o
 		}
 	}
 	// 检查用户是否被禁用
-	userModel := model.UserModel.GetByUserIdIsBanned(requestKeyModel.UserId, false)
+	userModel := model.TeamModel.GetByUserIdIsBanned(requestKeyModel.UserId, false)
 	if userModel == nil {
 		go_error.ThrowInternal(`user is invalid or is baned`)
 	}
