@@ -163,8 +163,13 @@ github.com/pefish/go-logger v0.1.15 h1:9f4KQRxX5MRMjVoeTLsP74mGCqYAkZhT3d0oL+Itn
 github.com/pefish/go-logger v0.1.15/go.mod h1:gK0RvpsFL+VPfLxj7bmoVOTGfwS2rIJoOLDT/QC/0i8=
 github.com/pefish/go-mysql v0.7.3 h1:iE2ereGxxH8afxLqRAg+pdYbP65CvfRmidbqGpsA/p4=
 github.com/pefish/go-mysql v0.7.3/go.mod h1:POeWlyaAaVzXCvbO7BUVrFJilDoasYGsfZaw6NnmiQo=
+github.com/pefish/go-mysql v0.7.4/go.mod h1:ic7eJjOfsuE1uxdpR8lbAO0u1wABMRIVOReUuvguDvA=
+github.com/pefish/go-mysql v0.7.5 h1:X7PwWvuWNY3j+XANunR8/e/ueYivJCd8S4ykfT9NWkE=
+github.com/pefish/go-mysql v0.7.5/go.mod h1:ic7eJjOfsuE1uxdpR8lbAO0u1wABMRIVOReUuvguDvA=
 github.com/pefish/go-redis v0.2.0 h1:dj4TzOe0YFsrApxuTBHUKSI24IX4ari8B2UenZ4f9bw=
 github.com/pefish/go-redis v0.2.0/go.mod h1:IdarTLwG1ZVNxhc4ka4V+8QzX9rRouoBlbM5WaqLHBE=
+github.com/pefish/go-redis v0.2.1 h1:PgEkQCw68OptlkyJOSoiGu724BDWWvhdPFYC2OPOLvo=
+github.com/pefish/go-redis v0.2.1/go.mod h1:X6CNHaAsNdHot08rQizEt3PAfaQSq2RxzMQ7fcQ3y+c=
 github.com/pefish/go-reflect v0.1.1 h1:ga1xuOwahhGbu5qwoYNeiaTFhYr60Epmxp74YGMpfPk=
 github.com/pefish/go-reflect v0.1.1/go.mod h1:lv3gz/Zh2FsqCq8jqzdCgYpoM41AjE90HtknRbkXhjQ=
 github.com/pefish/go-stack v0.0.1 h1:CJjPZBu2OZB+J0CjojAyfALTpJqkTUgy4oy6e4/RNtw=

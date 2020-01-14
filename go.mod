@@ -10,10 +10,12 @@ require (
 	github.com/pefish/go-http v0.4.0
 	github.com/pefish/go-json v0.1.1
 	github.com/pefish/go-logger v0.1.15
-	github.com/pefish/go-mysql v0.7.3
-	github.com/pefish/go-redis v0.2.0
+	github.com/pefish/go-mysql v0.7.5
+	github.com/pefish/go-redis v0.2.1
 	github.com/pefish/go-reflect v0.1.1
 	github.com/pefish/go-time v0.1.0
 	github.com/pefish/storm-golang-sdk v0.1.6
 	github.com/satori/go.uuid v1.2.0
 )
+
+go 1.13

@@ -36,10 +36,10 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 
 	lockKey := fmt.Sprintf(`storm_wallet_get_deposit_address_%d_lock`, apiSession.UserId)
 	uniqueId := uuid.NewV1().String()
-	if !go_redis.RedisHelper.GetLock(lockKey, uniqueId, 3*time.Second) {
+	if !go_redis.RedisHelper.MustGetLock(lockKey, uniqueId, 3*time.Second) {
 		go_error.Throw(`rate limit`, constant.API_RATELIMIT)
 	}
-	defer go_redis.RedisHelper.ReleaseLock(lockKey, uniqueId)
+	defer go_redis.RedisHelper.MustReleaseLock(lockKey, uniqueId)
 
 	currencyModel := model.UserCurrencyModel.GetCurrencyOfUserByCurrencyChain(apiSession.UserId, params.Currency, params.Chain)
 	if currencyModel == nil {

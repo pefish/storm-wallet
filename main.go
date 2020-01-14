@@ -45,11 +45,13 @@ func main() {
 
 	// 初始化数据库连接
 	mysqlConfig := go_config.Config.MustGetMap(`mysql`)
+	go_mysql.MysqlHelper.SetLogger(go_logger.Logger)
 	go_mysql.MysqlHelper.MustConnectWithMap(mysqlConfig)
 	defer go_mysql.MysqlHelper.Close()
 
 	// 初始化redis连接
 	redisConfig := go_config.Config.MustGetMap(`redis`)
+	go_redis.RedisHelper.SetLogger(go_logger.Logger)
 	go_redis.RedisHelper.ConnectWithMap(redisConfig)
 	defer go_redis.RedisHelper.Close()
 
