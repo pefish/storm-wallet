@@ -119,11 +119,11 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		"currency":   params.Currency,
 		"memo":       memo,
 		"request_id": params.RequestId}
-	content := go_json.Json.Stringify(paramsMap)
+	content := go_json.Json.MustStringify(paramsMap)
 	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
 	go_logger.Logger.DebugF("content: %s\n", content)
 	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(5 * time.Second))
-	strResult := httpUtil.PostForString(go_http.RequestParam{
+	strResult := httpUtil.MustPostForString(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,
 		Headers: map[string]interface{}{
@@ -134,7 +134,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	mark := `ok`
 	confirmStatus := 2
 	if strResult != `ok` {
-		mark = go_json.Json.Stringify(strResult)
+		mark = go_json.Json.MustStringify(strResult)
 		confirmStatus = 3
 	}
 	go_mysql.MysqlHelper.MustRawExec(
