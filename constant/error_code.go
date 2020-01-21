@@ -26,6 +26,9 @@ const (
 	WALLET_CONFIG_ERROR      uint64 = 2011 // 钱包配置错误
 	ILLEGAL_MEMBER           uint64 = 2012 // 成员非法
 
-	ROLE_AUTH_ERROR uint64 = 2101 // 用户角色权限不够
-	USER_NOT_FOUND  uint64 = 2102 // 用户没找到或被禁用
+	ROLE_AUTH_ERROR     uint64 = 2101 // 用户角色权限不够
+	USER_NOT_FOUND      uint64 = 2102 // 用户没找到或被禁用
+	NO_TEAM_ERROR       uint64 = 2103 // 没有加入团队
+	ING_TEAM            uint64 = 2104 // 已经处于团队当中
+	USER_NOT_IN_MY_TEAM uint64 = 2105 // 此成员不是本团队成员
 )

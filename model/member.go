@@ -37,10 +37,26 @@ func (this *Member) GetByMemberId(memberId uint64) *Member {
 	return &result
 }
 
+func (this *Member) ListByTeamId(results *[]Member, teamId uint64) {
+	go_mysql.MysqlHelper.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
+		`team_id`: teamId,
+	})
+}
+
 func (this *Member) GetByUserId(userId uint64) *Member {
 	result := Member{}
 	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`: userId,
+	}); notFound {
+		return nil
+	}
+	return &result
+}
+
+func (this *Member) GetByEmail(email string) *Member {
+	result := Member{}
+	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+		`email`: email,
 	}); notFound {
 		return nil
 	}
@@ -58,9 +74,16 @@ func (this *Member) GetValidByUserId(userId uint64) *Member {
 	return &result
 }
 
-func (this *Member) UpdateByMap(memberId uint64, update map[string]interface{}) {
+func (this *Member) UpdateByUserIdTeamId(userId uint64, teamId uint64, update map[string]interface{}) {
 	go_mysql.MysqlHelper.MustAffectedUpdate(this.GetTableName(), update, map[string]interface{}{
-		`id`: memberId,
+		`user_id`: userId,
+		`team_id`: teamId,
+	})
+}
+
+func (this *Member) UpdateByUserId(userId uint64, update map[string]interface{}) {
+	go_mysql.MysqlHelper.MustAffectedUpdate(this.GetTableName(), update, map[string]interface{}{
+		`user_id`: userId,
 	})
 }
 
