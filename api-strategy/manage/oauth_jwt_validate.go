@@ -38,7 +38,7 @@ func (this *OauthJwtValidateClass) GetDescription() string {
 }
 
 func (this *OauthJwtValidateClass) GetErrorCode() uint64 {
-	return constant.AUTH_ERROR
+	return constant.JWT_ERROR
 }
 
 type OauthJwtValidateParam struct {

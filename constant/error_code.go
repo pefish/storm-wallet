@@ -2,11 +2,11 @@ package constant
 
 const (
 	PARAM_ERROR                 uint64 = 2001 // 参数错误
+	JWT_ERROR                   uint64 = 2002 // 登陆失效
 	API_RATELIMIT               uint64 = 2003 // api频率限制
 	AUTH_ERROR                  uint64 = 2004 // api权限验证不通过
 	ILLEGAL_ADDRESS             uint64 = 2005 // 地址非法
 	USER_CURRENCY_NOT_AVAILABLE uint64 = 2006 // 用户币种不可用
-	CURRENCY_NOT_AVAILABLE      uint64 = 2009 // 币种不可用（无此币种或币种被禁用）
 
 	WITHDRAW_REQUEST_ID_USED uint64 = 2007 // 提现request id已经被使用
 	CURRENCY_WITHDRAW_BANNED uint64 = 2008 // 币种提现被禁用
@@ -25,6 +25,7 @@ const (
 	USERID_TOO_BIG           uint64 = 2010 // 用户id太大
 	WALLET_CONFIG_ERROR      uint64 = 2011 // 钱包配置错误
 	ILLEGAL_MEMBER           uint64 = 2012 // 成员非法
+	CURRENCY_NOT_AVAILABLE   uint64 = 2013 // 币种不可用（无此币种或币种被禁用）
 
 	ROLE_AUTH_ERROR     uint64 = 2101 // 用户角色权限不够
 	USER_NOT_FOUND      uint64 = 2102 // 用户没找到或被禁用
