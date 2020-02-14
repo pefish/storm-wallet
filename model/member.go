@@ -8,6 +8,7 @@ var MemberModel = Member{}
 
 type Member struct {
 	TeamId   uint64 `json:"team_id"`
+	Name    string `json:"name"`
 	Email    string `json:"email"`
 	Roles    string `json:"roles"`
 	UserId   uint64 `json:"user_id"`

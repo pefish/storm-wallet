@@ -34,7 +34,10 @@ func (this *MemberControllerClass) AddMember(apiSession *api_session.ApiSessionC
 
 	targetMember := model.MemberModel.GetByEmail(params.Email)
 	if targetMember == nil {
-		go_error.Throw(`member not found`, constant.USER_NOT_FOUND)
+		go_error.Throw(`member not found`, constant.MEMBER_NOT_FOUND)
+	}
+	if targetMember.UserId == 0 {
+		go_error.Throw(`member not sync`, constant.MEMBER_NOT_SYNC)
 	}
 	if targetMember.TeamId != 0 {
 		go_error.Throw(`target member is team member already`, constant.ING_TEAM)
@@ -60,7 +63,7 @@ func (this *MemberControllerClass) RemoveMember(apiSession *api_session.ApiSessi
 
 	targetMember := model.MemberModel.GetByUserId(params.UserId)
 	if targetMember == nil {
-		go_error.Throw(`member not found`, constant.USER_NOT_FOUND)
+		go_error.Throw(`member not found`, constant.MEMBER_NOT_FOUND)
 	}
 	if targetMember.TeamId != memberModel.TeamId {
 		go_error.Throw(`member not in your team`, constant.USER_NOT_IN_MY_TEAM)
@@ -88,7 +91,7 @@ func (this *MemberControllerClass) EditMember(apiSession *api_session.ApiSession
 
 	targetMember := model.MemberModel.GetByUserId(params.UserId)
 	if targetMember == nil {
-		go_error.Throw(`member not found`, constant.USER_NOT_FOUND)
+		go_error.Throw(`member not found`, constant.MEMBER_NOT_FOUND)
 	}
 
 	if targetMember.TeamId != memberModel.TeamId {

@@ -28,8 +28,9 @@ const (
 	CURRENCY_NOT_AVAILABLE   uint64 = 2013 // 币种不可用（无此币种或币种被禁用）
 
 	ROLE_AUTH_ERROR     uint64 = 2101 // 用户角色权限不够
-	USER_NOT_FOUND      uint64 = 2102 // 用户没找到或被禁用
+	MEMBER_NOT_FOUND    uint64 = 2102 // 成员没找到或被禁用
 	NO_TEAM_ERROR       uint64 = 2103 // 没有加入团队
 	ING_TEAM            uint64 = 2104 // 已经处于团队当中
 	USER_NOT_IN_MY_TEAM uint64 = 2105 // 此成员不是本团队成员
+	MEMBER_NOT_SYNC     uint64 = 2106 // 成员信息还没有同步
 )

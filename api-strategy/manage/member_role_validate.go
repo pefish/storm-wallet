@@ -33,7 +33,7 @@ type MemberRoleValidateParam struct {
 func (this *MemberRoleValidateStrategyClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
 	memberModel := model.MemberModel.GetValidByUserId(out.UserId)
 	if memberModel == nil {
-		go_error.Throw(`user not found or banned`, constant.USER_NOT_FOUND)
+		go_error.Throw(`user not found or banned`, constant.MEMBER_NOT_FOUND)
 	}
 	if param != nil {
 		newParam := param.(MemberRoleValidateParam)

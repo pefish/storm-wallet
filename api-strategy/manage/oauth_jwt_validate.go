@@ -46,7 +46,6 @@ type OauthJwtValidateParam struct {
 }
 
 func (this *OauthJwtValidateClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
-
 	// 校验jwt合法性
 	jwtStr := out.Ctx.GetHeader(`JSON-WEB-TOKEN`)
 	if jwtStr == `` {
