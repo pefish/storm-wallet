@@ -32,6 +32,7 @@ var MemberRoute = map[string]*api_channel_builder.Route{
 		ParamType: api_strategy2.ALL_TYPE,
 		Params: manage2.AddMemberParam{
 			Email: `laijiyong@qq.com`,
+			Name: `张三`,
 		},
 		Controller: manage2.MemberController.AddMember,
 		Return: api_channel_builder.ApiResult{

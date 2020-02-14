@@ -20,6 +20,7 @@ type MemberControllerClass struct {
 var MemberController = MemberControllerClass{}
 
 type AddMemberParam struct {
+	Name string `json:"name" validate:"required" desc:"名称"`
 	Email string `json:"email" validate:"required" desc:"邮箱"`
 }
 
@@ -44,6 +45,7 @@ func (this *MemberControllerClass) AddMember(apiSession *api_session.ApiSessionC
 	}
 	model.MemberModel.UpdateByUserId(targetMember.UserId, map[string]interface{}{
 		`team_id`: memberModel.TeamId,
+		`name`: params.Name,
 	})
 	return map[string]string{}
 }
