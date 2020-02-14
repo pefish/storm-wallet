@@ -29,7 +29,7 @@ deploy_to_k8s:
     name: bitnami/kubectl:latest
     entrypoint: [""]
   script:
-    - kubectl --kubeconfig="$KUBE_CONFIG" -n default set image deployment/hz-backend-wallet-storm-wallet wallet-storm-wallet=$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - kubectl --kubeconfig="$KUBE_CONFIG" -n default set image deployment/backend-wallet-storm-wallet wallet-storm-wallet=$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
   only:
     - master
 
