@@ -1,19 +1,20 @@
 package route
 
 import (
-	"github.com/pefish/go-core/api-channel-builder"
+	"github.com/pefish/go-core/api"
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
+	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
 	"wallet-storm-wallet/return-hook"
 )
 
-var UserRoute = map[string]*api_channel_builder.Route{
-	`get_balance`: {
+var UserRoute = []*api.Api{
+	{
 		Description: "获取账户余额",
 		Path:        "/v1/balance",
 		Method:      "GET",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -22,7 +23,7 @@ var UserRoute = map[string]*api_channel_builder.Route{
 		ParamType:      api_strategy2.ALL_TYPE,
 		Controller:     controller.UserController.ListBalance,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: []controller.ListBalanceReturn{
 				{
 					Currency: `ETH`,
@@ -33,11 +34,11 @@ var UserRoute = map[string]*api_channel_builder.Route{
 			},
 		},
 	},
-	`list_user_currencies`: {
+	{
 		Description: "获取用户开启的所有币种",
 		Path:        "/v1/user-currencies",
 		Method:      "GET",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -46,7 +47,7 @@ var UserRoute = map[string]*api_channel_builder.Route{
 		ParamType:      api_strategy2.ALL_TYPE,
 		Controller:     controller.UserController.ListUserCurrencies,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: []controller.ListUserCurrencyReturn{
 				{
 					WithdrawLimitDaily:            200,
@@ -68,11 +69,11 @@ var UserRoute = map[string]*api_channel_builder.Route{
 			},
 		},
 	},
-	`get_user_currencies`: {
+	{
 		Description: "获取用户开启的币种",
 		Path:        "/v1/user-currency",
 		Method:      "GET",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -85,7 +86,7 @@ var UserRoute = map[string]*api_channel_builder.Route{
 		},
 		Controller:     controller.UserController.GetUserCurrency,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: []controller.ListUserCurrencyReturn{
 				{
 					WithdrawLimitDaily:            200,
@@ -107,11 +108,11 @@ var UserRoute = map[string]*api_channel_builder.Route{
 			},
 		},
 	},
-	`get_coin_balance`: {
+	{
 		Description: "获取账户指定币种余额",
 		Path:        "/v1/coin-balance",
 		Method:      "GET",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -120,7 +121,7 @@ var UserRoute = map[string]*api_channel_builder.Route{
 		ParamType:      api_strategy2.ALL_TYPE,
 		Controller:     controller.UserController.GetCoinBalance,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: []controller.ListBalanceReturn{
 				{
 					Currency: `ETH`,

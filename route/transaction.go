@@ -1,19 +1,20 @@
 package route
 
 import (
-	"github.com/pefish/go-core/api-channel-builder"
+	"github.com/pefish/go-core/api"
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
+	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
 	"wallet-storm-wallet/return-hook"
 )
 
-var TransactionRoute = map[string]*api_channel_builder.Route{
-	`list_deposit_transaction`: {
+var TransactionRoute = []*api.Api{
+	{
 		Description: "获取充值交易详情",
 		Path:        "/v1/deposit/transactions",
 		Method:      "GET",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -25,7 +26,7 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 		},
 		Controller:     controller.TransactionController.ListDepositTransaction,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: []controller.ListDepositTransactionReturn{
 				{
 					UserId:        1,
@@ -45,11 +46,11 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 			},
 		},
 	},
-	`list_withdraw_transaction`: {
+	{
 		Description: "获取提现交易详情",
 		Path:        "/v1/withdraw/transactions",
 		Method:      "GET",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -61,7 +62,7 @@ var TransactionRoute = map[string]*api_channel_builder.Route{
 		},
 		Controller:     controller.TransactionController.ListWithdrawTransaction,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: []controller.ListWithdrawTransactionReturn{
 				{
 					UserId:        1,

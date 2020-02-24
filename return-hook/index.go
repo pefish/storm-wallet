@@ -2,7 +2,7 @@ package return_hook
 
 import (
 	"encoding/json"
-	"github.com/pefish/go-core/api-channel-builder"
+	"github.com/pefish/go-core/api"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-reflect"
@@ -11,7 +11,7 @@ import (
 	"wallet-storm-wallet/model"
 )
 
-func ReturnHook(apiContext *api_session.ApiSessionClass, apiResult *api_channel_builder.ApiResult) (interface{}, *go_error.ErrorInfo) {
+func ReturnHook(apiContext *api_session.ApiSessionClass, apiResult *api.ApiResult) (interface{}, *go_error.ErrorInfo) {
 	bytes, err := json.Marshal(apiResult)
 	if err != nil {
 		return nil, &go_error.ErrorInfo{

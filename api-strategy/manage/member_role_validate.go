@@ -1,8 +1,8 @@
 package manage
 
 import (
-	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
+	"github.com/pefish/go-core/driver/logger"
 	"github.com/pefish/go-error"
 	"strings"
 	"wallet-storm-wallet/constant"
@@ -30,7 +30,17 @@ type MemberRoleValidateParam struct {
 	RequiredRole string
 }
 
-func (this *MemberRoleValidateStrategyClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
+func (this *MemberRoleValidateStrategyClass) InitAsync(param interface{}, onAppTerminated chan interface{}) {
+	logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
+	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
+}
+
+func (this *MemberRoleValidateStrategyClass) Init(param interface{}) {
+	logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init`, this.GetName())
+	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
+}
+
+func (this *MemberRoleValidateStrategyClass) Execute(out *api_session.ApiSessionClass, param interface{}) {
 	memberModel := model.MemberModel.GetValidByUserId(out.UserId)
 	if memberModel == nil {
 		go_error.Throw(`user not found or banned`, constant.MEMBER_NOT_FOUND)

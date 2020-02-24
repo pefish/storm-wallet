@@ -3,8 +3,8 @@ package api_strategy
 import (
 	"fmt"
 	"github.com/pefish/go-application"
-	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
+	"github.com/pefish/go-core/driver/logger"
 	"github.com/pefish/go-core/util"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-reflect"
@@ -37,7 +37,17 @@ type ApikeyAuthParam struct {
 	AllowedType string // 允许的key类型，逗号隔开
 }
 
-func (this *ApikeyAuthStrategyClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
+func (this *ApikeyAuthStrategyClass) InitAsync(param interface{}, onAppTerminated chan interface{}) {
+	logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
+	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
+}
+
+func (this *ApikeyAuthStrategyClass) Init(param interface{}) {
+	logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init`, this.GetName())
+	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
+}
+
+func (this *ApikeyAuthStrategyClass) Execute(out *api_session.ApiSessionClass, param interface{}) {
 	var p ApikeyAuthParam
 
 	reqPubKey := out.Ctx.GetHeader(`STM-REQ-KEY`)

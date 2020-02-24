@@ -3,6 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/ory/hydra-client-go/client"
+	go_core "github.com/pefish/go-core"
+	external_service "github.com/pefish/go-core/driver/external-service"
+	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
+	"github.com/pefish/go-core/driver/logger"
 	"os"
 	"runtime/debug"
 	"time"
@@ -15,12 +19,11 @@ import (
 	go_application "github.com/pefish/go-application"
 	go_config "github.com/pefish/go-config"
 	api_strategy "github.com/pefish/go-core/api-strategy"
-	"github.com/pefish/go-core/logger"
-	"github.com/pefish/go-core/service"
 	go_http "github.com/pefish/go-http"
 	go_logger "github.com/pefish/go-logger"
 	go_mysql "github.com/pefish/go-mysql"
 	go_redis "github.com/pefish/go-redis"
+	external_service2 "wallet-storm-wallet/external-service"
 )
 
 func main() {
@@ -43,7 +46,7 @@ func main() {
 	// 处理日志
 	env := go_config.Config.GetString(`env`)
 	go_application.Application.Debug = env == `local` || env == `dev`
-	go_logger.Logger.Init(service.Service.GetName(), ``)
+	go_logger.Logger.Init(go_core.Service.GetName(), ``)
 	logger.LoggerDriver.Register(go_logger.Logger)
 
 	// 初始化数据库连接
@@ -58,8 +61,8 @@ func main() {
 	go_redis.RedisHelper.MustConnectWithMap(redisConfig)
 	defer go_redis.RedisHelper.Close()
 
-	service.Service.SetName(`storm钱包服务api`)
-	service.Service.SetPath(`/api/storm`)
+	go_core.Service.SetName(`storm钱包服务api`)
+	go_core.Service.SetPath(`/api/storm`)
 	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
 
 	global.HydraClientInstance = client.New(
@@ -70,14 +73,21 @@ func main() {
 		nil)
 	global.AuthServerUrl = go_config.Config.GetString(`/authServer/scheme`) + `://` + go_config.Config.GetString(`/authServer/host`)
 
-	service.Service.SetRoutes(
+	external_service.ExternalServiceDriver.Register(`deposit_address`, &external_service2.DepositAddressService)
+
+	global_api_strategy.GlobalApiStrategyDriver.Register(global_api_strategy.StrategyData{
+		Strategy: &api_strategy.OpenCensusStrategy,
+		Disable: go_application.Application.Env == `local`,
+	})
+
+	go_core.Service.SetRoutes(
 		route.AddressRoute,
 		route.TransactionRoute,
 		route.WithdrawRoute,
 		route.UserRoute,
 		manage.MemberRoute,
 	)
-	service.Service.SetHost(go_config.Config.GetString(`host`))
-	service.Service.SetPort(go_config.Config.GetUint64(`port`))
-	service.Service.Run()
+	go_core.Service.SetHost(go_config.Config.GetString(`host`))
+	go_core.Service.SetPort(go_config.Config.GetUint64(`port`))
+	go_core.Service.Run()
 }

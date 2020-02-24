@@ -1,19 +1,20 @@
 package route
 
 import (
-	"github.com/pefish/go-core/api-channel-builder"
+	"github.com/pefish/go-core/api"
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
+	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
 	"wallet-storm-wallet/return-hook"
 )
 
-var WithdrawRoute = map[string]*api_channel_builder.Route{
-	`withdraw`: {
+var WithdrawRoute = []*api.Api{
+	{
 		Description: "发起提现",
 		Path:        "/v1/withdraw",
 		Method:      "POST",
-		Strategies: []api_channel_builder.StrategyRoute{
+		Strategies: []global_api_strategy.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -32,7 +33,7 @@ var WithdrawRoute = map[string]*api_channel_builder.Route{
 		},
 		Controller:     controller.WithdrawController.Withdraw,
 		ReturnHookFunc: return_hook.ReturnHook,
-		Return: api_channel_builder.ApiResult{
+		Return: api.ApiResult{
 			Data: ``,
 		},
 	},

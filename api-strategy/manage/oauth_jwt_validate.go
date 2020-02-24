@@ -11,6 +11,7 @@ import (
 	"github.com/ory/hydra-client-go/client/public"
 	"github.com/ory/hydra-client-go/models"
 	"github.com/pefish/go-config"
+	"github.com/pefish/go-core/driver/logger"
 	"github.com/pefish/go-reflect"
 	"log"
 	"math/big"
@@ -19,7 +20,6 @@ import (
 	"wallet-storm-wallet/constant"
 	"wallet-storm-wallet/global"
 
-	"github.com/pefish/go-core/api-channel-builder"
 	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-error"
 )
@@ -41,11 +41,21 @@ func (this *OauthJwtValidateClass) GetErrorCode() uint64 {
 	return constant.JWT_ERROR
 }
 
+func (this *OauthJwtValidateClass) InitAsync(param interface{}, onAppTerminated chan interface{}) {
+	logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
+	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
+}
+
+func (this *OauthJwtValidateClass) Init(param interface{}) {
+	logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init`, this.GetName())
+	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
+}
+
 type OauthJwtValidateParam struct {
 	RequiredScopes []string
 }
 
-func (this *OauthJwtValidateClass) Execute(route *api_channel_builder.Route, out *api_session.ApiSessionClass, param interface{}) {
+func (this *OauthJwtValidateClass) Execute(out *api_session.ApiSessionClass, param interface{}) {
 	// 校验jwt合法性
 	jwtStr := out.Ctx.GetHeader(`JSON-WEB-TOKEN`)
 	if jwtStr == `` {
