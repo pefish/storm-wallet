@@ -3,7 +3,7 @@ package route
 import (
 	"github.com/pefish/go-core/api"
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
-	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
+	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
 	"wallet-storm-wallet/return-hook"
@@ -14,7 +14,7 @@ var WithdrawRoute = []*api.Api{
 		Description: "发起提现",
 		Path:        "/v1/withdraw",
 		Method:      "POST",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -23,7 +23,7 @@ var WithdrawRoute = []*api.Api{
 				},
 			},
 		},
-		ParamType: api_strategy2.ALL_TYPE,
+		ParamType: global_api_strategy2.ALL_TYPE,
 		Params: controller.WithdrawParam{
 			Currency:  `ETH`,
 			Chain:     `Eth`,

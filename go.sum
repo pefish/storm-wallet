@@ -269,6 +269,8 @@ github.com/pefish/go-core v0.5.12 h1:groEO5skqjBls6ZG5imO5XnrQoNcG0ueoAZKobx4jEo
 github.com/pefish/go-core v0.5.12/go.mod h1:pg71G4L9sV6LnIv02Zfn4NsDo00Kisn01gUun93digo=
 github.com/pefish/go-core v0.7.3 h1:p2Kli25BD/W4s6JoKjIQTs/hxsVTwriH0Nj3wHXaLGA=
 github.com/pefish/go-core v0.7.3/go.mod h1:DNQFW+Aebz9/lz5ROPeXUo5X7LkNflLBpBgAUgJ7O2w=
+github.com/pefish/go-core v0.7.8 h1:e+m1P5VcnXgYlGcJcb5JOxJG2ixmGs1aoUXTsOr1y+c=
+github.com/pefish/go-core v0.7.8/go.mod h1:DNQFW+Aebz9/lz5ROPeXUo5X7LkNflLBpBgAUgJ7O2w=
 github.com/pefish/go-crypto v0.2.0 h1:h/rQWTm7IIO1QZfntVwxigJD9JTvQAu5k5dVAQaQHWA=
 github.com/pefish/go-crypto v0.2.0/go.mod h1:mqSAP9pi/W9wmhkHImKPpJYlsXXTx9TTqIAlUYVGtTA=
 github.com/pefish/go-decimal v0.2.0 h1:oRe3Q29YdhS7vswFNcprsMYSmwAiwYqyNjUuEw8OMvQ=

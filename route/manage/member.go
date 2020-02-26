@@ -2,7 +2,7 @@ package manage
 
 import (
 	"github.com/pefish/go-core/api"
-	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
+	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"wallet-storm-wallet/api-strategy/manage"
 	manage2 "wallet-storm-wallet/controller/manage"
 
@@ -14,7 +14,7 @@ var MemberRoute = []*api.Api{
 		Description: "新增成员(必须先同步用户且不在任何团队中)",
 		Path:        "/v1/add-member",
 		Method:      "POST",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -30,7 +30,7 @@ var MemberRoute = []*api.Api{
 				},
 			},
 		},
-		ParamType: api_strategy2.ALL_TYPE,
+		ParamType: global_api_strategy2.ALL_TYPE,
 		Params: manage2.AddMemberParam{
 			Email: `laijiyong@qq.com`,
 			Name: `张三`,
@@ -44,7 +44,7 @@ var MemberRoute = []*api.Api{
 		Description: "从团队中移除成员",
 		Path:        "/v1/remove-member",
 		Method:      "POST",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -60,7 +60,7 @@ var MemberRoute = []*api.Api{
 				},
 			},
 		},
-		ParamType: api_strategy2.ALL_TYPE,
+		ParamType: global_api_strategy2.ALL_TYPE,
 		Params: manage2.RemoveMemberParam{
 			UserId: 1,
 		},
@@ -73,7 +73,7 @@ var MemberRoute = []*api.Api{
 		Description: "编辑成员",
 		Path:        "/v1/edit-member",
 		Method:      "POST",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -89,7 +89,7 @@ var MemberRoute = []*api.Api{
 				},
 			},
 		},
-		ParamType: api_strategy2.ALL_TYPE,
+		ParamType: global_api_strategy2.ALL_TYPE,
 		Params: manage2.EditMemberParam{
 			UserId: 534,
 		},
@@ -102,7 +102,7 @@ var MemberRoute = []*api.Api{
 		Description: "列出成员",
 		Path:        "/v1/list-member",
 		Method:      "GET",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -118,7 +118,7 @@ var MemberRoute = []*api.Api{
 				},
 			},
 		},
-		ParamType:  api_strategy2.ALL_TYPE,
+		ParamType:  global_api_strategy2.ALL_TYPE,
 		Controller: manage2.MemberController.ListMember,
 		Return: api.ApiResult{
 			Data: map[string]interface{}{},
@@ -128,12 +128,12 @@ var MemberRoute = []*api.Api{
 		Description: "从授权服务器同步成员信息(前端控制注册或登陆成功之后才调一次)",
 		Path:        "/v1/sync-member",
 		Method:      "POST",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 			},
 		},
-		ParamType:  api_strategy2.ALL_TYPE,
+		ParamType:  global_api_strategy2.ALL_TYPE,
 		Controller: manage2.MemberController.SyncMember,
 		Return: api.ApiResult{
 			Data: map[string]interface{}{},

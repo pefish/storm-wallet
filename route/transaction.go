@@ -3,7 +3,7 @@ package route
 import (
 	"github.com/pefish/go-core/api"
 	api_strategy2 "github.com/pefish/go-core/api-strategy"
-	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
+	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
 	"wallet-storm-wallet/return-hook"
@@ -14,13 +14,13 @@ var TransactionRoute = []*api.Api{
 		Description: "获取充值交易详情",
 		Path:        "/v1/deposit/transactions",
 		Method:      "GET",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
 			},
 		},
-		ParamType: api_strategy2.ALL_TYPE,
+		ParamType: global_api_strategy2.ALL_TYPE,
 		Params: controller.ListDepositTransactionParam{
 			TxId: `0xfeaef9adaa8a949f474cd86d573838e370441616c53836f4a19de0db64b73a68`,
 		},
@@ -50,13 +50,13 @@ var TransactionRoute = []*api.Api{
 		Description: "获取提现交易详情",
 		Path:        "/v1/withdraw/transactions",
 		Method:      "GET",
-		Strategies: []global_api_strategy.StrategyData{
+		Strategies: []api_strategy2.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
 			},
 		},
-		ParamType: api_strategy2.ALL_TYPE,
+		ParamType: global_api_strategy2.ALL_TYPE,
 		Params: controller.ListWithdrawTransactionParam{
 			TxId: `0xfeaef9adaa8a949f474cd86d573838e370441616c53836f4a19de0db64b73a68`,
 		},

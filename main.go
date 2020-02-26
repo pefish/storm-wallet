@@ -7,6 +7,7 @@ import (
 	external_service "github.com/pefish/go-core/driver/external-service"
 	global_api_strategy "github.com/pefish/go-core/driver/global-api-strategy"
 	"github.com/pefish/go-core/driver/logger"
+	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"os"
 	"runtime/debug"
 	"time"
@@ -18,7 +19,6 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	go_application "github.com/pefish/go-application"
 	go_config "github.com/pefish/go-config"
-	api_strategy "github.com/pefish/go-core/api-strategy"
 	go_http "github.com/pefish/go-http"
 	go_logger "github.com/pefish/go-logger"
 	go_mysql "github.com/pefish/go-mysql"
@@ -45,7 +45,7 @@ func main() {
 
 	// 处理日志
 	env := go_config.Config.GetString(`env`)
-	go_application.Application.Debug = env == `local` || env == `dev`
+	go_application.Application.SetEnv(env)
 	go_logger.Logger.Init(go_core.Service.GetName(), ``)
 	logger.LoggerDriver.Register(go_logger.Logger)
 
@@ -63,7 +63,7 @@ func main() {
 
 	go_core.Service.SetName(`storm钱包服务api`)
 	go_core.Service.SetPath(`/api/storm`)
-	api_strategy.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
+	global_api_strategy2.ParamValidateStrategy.SetErrorCode(constant.PARAM_ERROR)
 
 	global.HydraClientInstance = client.New(
 		httptransport.New(
@@ -75,9 +75,14 @@ func main() {
 
 	external_service.ExternalServiceDriver.Register(`deposit_address`, &external_service2.DepositAddressService)
 
-	global_api_strategy.GlobalApiStrategyDriver.Register(global_api_strategy.StrategyData{
-		Strategy: &api_strategy.OpenCensusStrategy,
+	global_api_strategy.GlobalApiStrategyDriver.Register(global_api_strategy.GlobalStrategyData{
+		Strategy: &global_api_strategy2.OpenCensusStrategy,
 		Disable: go_application.Application.Env == `local`,
+		Param: global_api_strategy2.OpenCensusStrategyParam{
+			StackDriverOption: nil,
+			EnableTrace:       true,
+			EnableStats:       false,
+		},
 	})
 
 	go_core.Service.SetRoutes(
