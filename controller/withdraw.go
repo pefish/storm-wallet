@@ -72,7 +72,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	}
 
 	// 校验用户最大提现金额
-	if go_decimal.Decimal.Start(params.Amount).Gt(userCurrencyModel.MaxWithdrawAmount) {
+	if userCurrencyModel.MaxWithdrawAmount != -1 && go_decimal.Decimal.Start(params.Amount).Gt(userCurrencyModel.MaxWithdrawAmount) {
 		go_error.Throw(`amount must lte max withdraw amount`, constant.USER_MAX_WITHDRAW_AMOUNT)
 	}
 
