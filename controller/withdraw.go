@@ -138,14 +138,17 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		confirmStatus = 3
 	}
 	go_mysql.MysqlHelper.MustRawExec(
-		`insert into push_log (user_id,error_count,url,status,type,data, mark) values (?,?,?,?,?,?,?)`,
+		`insert into push_log (user_id,error_count,url,status,type,data, mark,chain,currency) values (?,?,?,?,?,?,?,?,?)`,
 		apiSession.UserId,
 		0,
 		userModel.WithdrawConfirmUrl,
 		confirmStatus,
 		3,
 		content,
-		mark)
+		mark,
+		params.Chain,
+		params.Currency,
+		)
 	if strResult != `ok` {
 		go_error.Throw(`withdraw confirm failed`, constant.WITHDRAW_CONFIRM_FAIL)
 	}
