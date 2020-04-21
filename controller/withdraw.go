@@ -122,7 +122,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	content := go_json.Json.MustStringify(paramsMap)
 	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
 	go_logger.Logger.DebugF("content: %s\n", content)
-	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(5 * time.Second))
+	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second))
 	strResult := httpUtil.MustPostForString(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,
