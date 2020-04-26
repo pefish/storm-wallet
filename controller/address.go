@@ -50,34 +50,25 @@ func (this *AddressControllerClass) NewAddress(apiSession *api_session.ApiSessio
 	}
 	depositAddressModel := model.DepositAddressModel.GetByUserIdSeriesIndex(apiSession.UserId, currencyModel.Series, params.Index)
 	if depositAddressModel != nil {
-		tag := ``
-		if currencyModel.HasTag == 1 {
-			tag = depositAddressModel.Tag
-		}
 		return NewAddressReturn{
 			Address: depositAddressModel.Address,
-			Tag:     tag,
+			Tag:     ``,
 		}
 	}
-	// 如果是带有tag的币种，就取热钱包地址，tag使用 位移算法（userid+index）
+	// 如果是带有tag的币种，就取热钱包地址, tag由客户管理
 	if currencyModel.HasTag == 1 {
-		if params.Index > 99999999 {
-			go_error.Throw(`index is too big`, constant.ADDRESS_INDEX_TOO_BIG)
-		}
 		if apiSession.UserId > 99 { // 1-99的用户才允许取带有tag的地址
 			go_error.Throw(`user id is too big`, constant.USERID_TOO_BIG)
 		}
-		tempTag := go_reflect.Reflect.MustToString(apiSession.UserId) + go_reflect.Reflect.MustToString(params.Index)
-		tag := go_crypto.Crypto.ShiftCryptForInt(5727262753, go_reflect.Reflect.MustToInt64(tempTag))
-		tagStr := go_reflect.Reflect.MustToString(tag)
+		// type 1 热钱包
 		walletConfigModel := model.WalletConfigModel.GetByChainType(currencyModel.Chain, 1)
 		if walletConfigModel == nil {
 			go_error.Throw(`hot wallet config error`, constant.WALLET_CONFIG_ERROR)
 		}
-		model.DepositAddressModel.Insert(apiSession.UserId, walletConfigModel.Address, ``, currencyModel.Series, params.Index, tagStr)
+		model.DepositAddressModel.Insert(apiSession.UserId, walletConfigModel.Address, ``, currencyModel.Series, params.Index, ``)
 		return NewAddressReturn{
 			Address: walletConfigModel.Address,
-			Tag:     tagStr,
+			Tag:     ``,
 		}
 	}
 
