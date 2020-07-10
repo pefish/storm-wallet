@@ -43,7 +43,7 @@ where user_id = ? and series = ? and is_deleted = 0 and address = ? and tag = ?
 
 func (this *DepositAddress) Insert(userId uint64, address string, path string, series string, index uint64, tag string) {
 	go_mysql.MysqlHelper.MustRawExec(
-		`insert into deposit_address (user_id, address, path, tag, series, address_index) values (?,?,?,?,?,?)`,
+		`insert ignore into deposit_address (user_id, address, path, tag, series, address_index) values (?,?,?,?,?,?)`,
 		userId,
 		address,
 		path,
