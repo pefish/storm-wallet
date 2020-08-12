@@ -39,7 +39,7 @@ build_send_dingding:
     name: gcr.io/cloud-builders/curl
     entrypoint: [""]
   script:
-    - curl -X POST -H "Content-Type:application/json" https://oapi.dingtalk.com/robot/send?access_token=72596cb1508cc0300879ffc657702ed6dd7e52470fca5a8dd54e9ff08d6579cb -d "{\"msgtype\":\"text\", \"text\":{\"content\":\"wallet-storm-wallet 镜像构建成功！！！ $CI_COMMIT_SHORT_SHA\"}}"
+    - curl -X POST -H "Content-Type:application/json" https://oapi.dingtalk.com/robot/send?access_token=1a214dbc67c5815417a64f02b7e9bd5fb506cd9f354ef728f546df9f79546d7f -d "{\"msgtype\":\"text\", \"text\":{\"content\":\"CI wallet-storm-wallet 镜像构建成功！！！ $CI_COMMIT_SHORT_SHA\"}}"
   only:
     - master
 
@@ -49,6 +49,6 @@ deploy_send_dingding:
     name: gcr.io/cloud-builders/curl
     entrypoint: [""]
   script:
-    - curl -X POST -H "Content-Type:application/json" https://oapi.dingtalk.com/robot/send?access_token=72596cb1508cc0300879ffc657702ed6dd7e52470fca5a8dd54e9ff08d6579cb -d "{\"msgtype\":\"text\", \"text\":{\"content\":\"wallet-storm-wallet 部署成功！！！\"}}"
+    - curl -X POST -H "Content-Type:application/json" https://oapi.dingtalk.com/robot/send?access_token=1a214dbc67c5815417a64f02b7e9bd5fb506cd9f354ef728f546df9f79546d7f -d "{\"msgtype\":\"text\", \"text\":{\"content\":\"CI wallet-storm-wallet 部署成功！！！\"}}"
   only:
     - master
