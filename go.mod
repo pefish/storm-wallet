@@ -5,7 +5,7 @@ require (
 	github.com/ory/hydra-client-go v1.2.1
 	github.com/pefish/go-application v0.1.4
 	github.com/pefish/go-config v0.1.12
-	github.com/pefish/go-core v1.0.14
+	github.com/pefish/go-core v1.0.16
 	github.com/pefish/go-core/api-session/type v0.0.0-20200812075421-22b684b8c609
 	github.com/pefish/go-core/driver/logger v0.0.0-20200812075421-22b684b8c609
 	github.com/pefish/go-decimal v0.2.2

@@ -16,15 +16,19 @@ var DepositAddressService = DepositAddressClass{}
 func (this *DepositAddressClass) Init(driver *external_service.ExternalServiceDriverClass) {
 	this.apiConfig = go_config.Config.MustGetMap(`depositAddressApi`)
 	this.baseUrl = this.apiConfig[`baseUrl`].(string)
+	this.BaseExternalServiceClass.Init(driver)
 }
 
 func (this *DepositAddressClass) ValidateAddress(series string, address string, memo string) {
 	path := this.apiConfig[`validateAddressPath`].(string)
-	this.PostJson(this.baseUrl+path, map[string]interface{}{
+	_, err := this.PostJson(this.baseUrl+path, map[string]interface{}{
 		`series`:  series,
 		`address`: address,
 		`memo`:    memo,
 	})
+	if err != nil {
+		panic(err)
+	}
 }
 
 type GetAddressReturn struct {
@@ -35,10 +39,13 @@ type GetAddressReturn struct {
 func (this *DepositAddressClass) GetAddress(series string, type_ uint64, index uint64) GetAddressReturn {
 	path := this.apiConfig[`getAddressPath`].(string)
 	result := GetAddressReturn{}
-	this.PostJsonForStruct(this.baseUrl+path, map[string]interface{}{
+	err := this.PostJsonForStruct(this.baseUrl+path, map[string]interface{}{
 		`series`: series,
 		`type`:   type_,
 		`index`:  index,
 	}, &result)
+	if err != nil {
+		panic(err)
+	}
 	return result
 }
