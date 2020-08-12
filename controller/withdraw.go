@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	go_application "github.com/pefish/go-application"
@@ -121,13 +122,16 @@ func (this *WithdrawControllerClass) Withdraw(apiSession _type.IApiSession) (int
 		"currency":   params.Currency,
 		"memo":       memo,
 		"request_id": params.RequestId}
-	content := go_json.Json.MustStringify(paramsMap)
-	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
+	content, err := json.Marshal(paramsMap)
+	if err != nil {
+		return nil, go_error.Wrap(err)
+	}
+	sig := signature.SignMessage(string(content)+`|`+timestamp, responseKeyModel.PrivateKey)
 	go_logger.Logger.DebugF("content: %s\n", content)
 	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second), go_http.WithIsDebug(go_application.Application.Debug))
 	_, strResult, err := httpUtil.Post(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
-		Params: params,
+		Params: paramsMap,
 		Headers: map[string]interface{}{
 			`STM-RES-SIGNATURE`: sig,
 			`STM-RES-TIMESTAMP`: timestamp,
