@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/pefish/go-core/api"
-	api_strategy2 "github.com/pefish/go-core/api-strategy"
+	type_ "github.com/pefish/go-core/api-strategy/type"
 	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
@@ -14,7 +14,7 @@ var TransactionRoute = []*api.Api{
 		Description: "获取充值交易详情",
 		Path:        "/v1/deposit/transactions",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -50,7 +50,7 @@ var TransactionRoute = []*api.Api{
 		Description: "获取提现交易详情",
 		Path:        "/v1/withdraw/transactions",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,

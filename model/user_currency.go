@@ -26,7 +26,7 @@ func (this *UserCurrency) GetTableName() string {
 func (this *UserCurrency) GetCurrencyOfUserByCurrencyChain(userId uint64, currency string, chain string) *Currency {
 	result := Currency{}
 	select_ := strings.Join(go_reflect.Reflect.GetValuesInTagFromStruct(&result, `json`), `,b.`)
-	if notFound := go_mysql.MysqlHelper.MustRawSelectFirst(&result, fmt.Sprintf(`
+	if notFound := go_mysql.MysqlInstance.MustRawSelectFirst(&result, fmt.Sprintf(`
 select b.%s from user_currency a
 left join currency b
 on a.currency_id = b.id
@@ -39,7 +39,7 @@ where b.currency = ? and b.chain = ? and a.is_deleted = 0 and b.is_banned = 0 an
 
 func (this *UserCurrency) GetByUserIdCurrencyId(userId uint64, currencyId uint64) *UserCurrency {
 	result := UserCurrency{}
-	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlInstance.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`:     userId,
 		`currency_id`: currencyId,
 		`is_deleted`:  0,
@@ -50,7 +50,7 @@ func (this *UserCurrency) GetByUserIdCurrencyId(userId uint64, currencyId uint64
 }
 
 func (this *UserCurrency) ListByUserId(results interface{}, userId uint64) {
-	go_mysql.MysqlHelper.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
+	go_mysql.MysqlInstance.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`:    userId,
 		`is_deleted`: 0,
 	})

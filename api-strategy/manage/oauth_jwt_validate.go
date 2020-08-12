@@ -11,6 +11,7 @@ import (
 	"github.com/ory/hydra-client-go/client/public"
 	"github.com/ory/hydra-client-go/models"
 	"github.com/pefish/go-config"
+	_type "github.com/pefish/go-core/api-session/type"
 	"github.com/pefish/go-core/driver/logger"
 	"github.com/pefish/go-reflect"
 	"log"
@@ -20,7 +21,6 @@ import (
 	"wallet-storm-wallet/constant"
 	"wallet-storm-wallet/global"
 
-	"github.com/pefish/go-core/api-session"
 	"github.com/pefish/go-error"
 )
 
@@ -55,11 +55,11 @@ type OauthJwtValidateParam struct {
 	RequiredScopes []string
 }
 
-func (this *OauthJwtValidateClass) Execute(out *api_session.ApiSessionClass, param interface{}) {
+func (this *OauthJwtValidateClass) Execute(out _type.IApiSession, param interface{}) *go_error.ErrorInfo {
 	// 校验jwt合法性
-	jwtStr := out.Ctx.GetHeader(`JSON-WEB-TOKEN`)
+	jwtStr := out.Header(`JSON-WEB-TOKEN`)
 	if jwtStr == `` {
-		go_error.ThrowInternal(`auth error. jwt not found.`)
+		return go_error.Wrap(errors.New(`auth error. jwt not found.`))
 	}
 
 	token, err := jwt.Parse(jwtStr, func(token *jwt.Token) (interface{}, error) {
@@ -74,43 +74,43 @@ func (this *OauthJwtValidateClass) Execute(out *api_session.ApiSessionClass, par
 		return verifyKey, nil
 	})
 	if err != nil {
-		go_error.ThrowInternalError(`jwt is illegal`, err)
+		return go_error.Wrap(errors.New(`jwt is illegal`))
 	}
 
 	jwtBody := token.Claims.(jwt.MapClaims)
-	out.JwtBody = jwtBody
+	out.SetJwtBody(jwtBody)
 	// 校验iss
 	checkIss := jwtBody.VerifyIssuer(global.AuthServerUrl+`/`, false)
 	if !checkIss {
-		go_error.ThrowInternal(`Invalid issuer.`)
+		return go_error.Wrap(errors.New(`Invalid issuer.`))
 	}
 
 	// 校验aud[0]必须是clientId
-	checkAud := jwtBody.VerifyAudience(go_config.Config.GetString(`clientId`), false)
+	checkAud := jwtBody.VerifyAudience(go_config.Config.MustGetString(`clientId`), false)
 	if !checkAud {
-		go_error.ThrowInternal(`Invalid audience.`)
+		return go_error.Wrap(errors.New(`Invalid audience.`))
 	}
 
 	// 校验sub
 	sub, ok := jwtBody[`sub`]
 	if !ok || sub.(string) == `` {
-		go_error.ThrowInternal(`Invalid subject.`)
+		return go_error.Wrap(errors.New(`Invalid subject.`))
 	}
-
-	out.UserId = go_reflect.Reflect.MustToUint64(sub)
+	out.SetUserId(go_reflect.Reflect.MustToUint64(sub))
 	// 校验scope
 	jwtScopes, ok := jwtBody[`scope`]
 	if !ok {
-		go_error.ThrowInternal(`Invalid scope.`)
+		return go_error.Wrap(errors.New(`Invalid scope.`))
 	}
 	if param != nil {
 		newParam := param.(OauthJwtValidateParam)
 		for _, scope := range newParam.RequiredScopes {
 			if !strings.Contains(jwtScopes.(string), scope) {
-				go_error.ThrowInternal(`required scope: ` + scope)
+				return go_error.Wrap(errors.New(`required scope: ` + scope))
 			}
 		}
 	}
+	return nil
 }
 
 func (this *OauthJwtValidateClass) getPublicKey(token *jwt.Token) (string, error) {

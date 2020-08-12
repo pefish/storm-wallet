@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"github.com/pefish/go-core/api-session"
+	_type "github.com/pefish/go-core/api-session/type"
+	go_error "github.com/pefish/go-error"
 	"wallet-storm-wallet/model"
 )
 
@@ -31,18 +32,18 @@ type ListDepositTransactionReturn struct {
 	CreatedAt     string  `json:"created_at"`
 }
 
-func (this *TransactionControllerClass) ListDepositTransaction(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *TransactionControllerClass) ListDepositTransaction(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	params := ListDepositTransactionParam{}
 	apiSession.ScanParams(&params)
 
 	results := []ListDepositTransactionReturn{}
 	if params.Chain == nil {
-		model.DepositModel.ListByUserIdTxIdForStruct(&results, apiSession.UserId, params.TxId)
+		model.DepositModel.ListByUserIdTxIdForStruct(&results, apiSession.UserId(), params.TxId)
 	} else {
-		model.DepositModel.ListByUserIdChainTxIdForStruct(&results, apiSession.UserId, *params.Chain, params.TxId)
+		model.DepositModel.ListByUserIdChainTxIdForStruct(&results, apiSession.UserId(), *params.Chain, params.TxId)
 	}
 
-	return results
+	return results, nil
 }
 
 type ListWithdrawTransactionParam struct {
@@ -67,16 +68,16 @@ type ListWithdrawTransactionReturn struct {
 	CreatedAt     string  `json:"created_at"`
 }
 
-func (this *TransactionControllerClass) ListWithdrawTransaction(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *TransactionControllerClass) ListWithdrawTransaction(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	params := ListWithdrawTransactionParam{}
 	apiSession.ScanParams(&params)
 
 	results := []ListWithdrawTransactionReturn{}
 	if params.Chain == nil {
-		model.WithdrawModel.ListByUserIdTxIdForStruct(&results, apiSession.UserId, params.TxId)
+		model.WithdrawModel.ListByUserIdTxIdForStruct(&results, apiSession.UserId(), params.TxId)
 	} else {
-		model.WithdrawModel.ListByUserIdChainTxIdForStruct(&results, apiSession.UserId, *params.Chain, params.TxId)
+		model.WithdrawModel.ListByUserIdChainTxIdForStruct(&results, apiSession.UserId(), *params.Chain, params.TxId)
 	}
 
-	return results
+	return results, nil
 }

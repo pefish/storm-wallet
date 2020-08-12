@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-mysql"
@@ -37,7 +38,7 @@ func (this *Withdraw) GetTableName() string {
 }
 
 func (this *Withdraw) ListByUserIdChainTxIdForStruct(results interface{}, userId uint64, chain string, txId string) {
-	go_mysql.MysqlHelper.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
+	go_mysql.MysqlInstance.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`: userId,
 		`chain`:   chain,
 		`tx_id`:   txId,
@@ -45,7 +46,7 @@ func (this *Withdraw) ListByUserIdChainTxIdForStruct(results interface{}, userId
 }
 
 func (this *Withdraw) ListByUserIdTxIdForStruct(results interface{}, userId uint64, txId string) {
-	go_mysql.MysqlHelper.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
+	go_mysql.MysqlInstance.MustSelect(results, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`: userId,
 		`tx_id`:   txId,
 	})
@@ -53,7 +54,7 @@ func (this *Withdraw) ListByUserIdTxIdForStruct(results interface{}, userId uint
 
 func (this *Withdraw) GetByUserIdRequestId(userId uint64, requestId string) *Withdraw {
 	result := Withdraw{}
-	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlInstance.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`user_id`:    userId,
 		`request_id`: requestId,
 	}); notFound {
@@ -70,7 +71,7 @@ func (this *Withdraw) GetWithdrewTotalOfToday(userId uint64, currency string, ch
 	beginOfTodayTime := go_time.Time.GetFormatTimeFromTimeObj(go_time.Time.GetLocalBeginTimeOfToday(), `0000-00-00 00:00:00`)
 	endOfTodayTime := go_time.Time.GetFormatTimeFromTimeObj(go_time.Time.GetLocalEndTimeOfToday(), `0000-00-00 00:00:00`)
 	sumStruct := WithdrewTotalStruct{}
-	go_mysql.MysqlHelper.MustRawSelectFirst(&sumStruct, fmt.Sprintf(`
+	go_mysql.MysqlInstance.MustRawSelectFirst(&sumStruct, fmt.Sprintf(`
 select sum(amount) as sum 
 from %s 
 where 
@@ -98,7 +99,7 @@ func (this *Withdraw) Insert(tran *go_mysql.MysqlClass, requestId string, userId
 		`tag`:         memo,
 	})
 	if num == 0 {
-		go_error.ThrowInternal(`insert error`)
+		go_error.ThrowInternal(errors.New(`insert error`))
 	}
 	return uint64(id)
 }

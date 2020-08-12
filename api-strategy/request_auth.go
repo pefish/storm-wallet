@@ -1,9 +1,9 @@
 package api_strategy
 
 import (
-	"fmt"
+	"errors"
 	"github.com/pefish/go-application"
-	"github.com/pefish/go-core/api-session"
+	_type "github.com/pefish/go-core/api-session/type"
 	"github.com/pefish/go-core/driver/logger"
 	"github.com/pefish/go-core/util"
 	"github.com/pefish/go-error"
@@ -47,67 +47,66 @@ func (this *ApikeyAuthStrategyClass) Init(param interface{}) {
 	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
 }
 
-func (this *ApikeyAuthStrategyClass) Execute(out *api_session.ApiSessionClass, param interface{}) {
+func (this *ApikeyAuthStrategyClass) Execute(out _type.IApiSession, param interface{}) *go_error.ErrorInfo {
 	var p ApikeyAuthParam
 
-	reqPubKey := out.Ctx.GetHeader(`STM-REQ-KEY`)
+	reqPubKey := out.Header(`STM-REQ-KEY`)
 	if reqPubKey == `` {
-		go_error.ThrowInternal(`auth error. api key not found.`)
+		return go_error.Wrap(errors.New(`auth error. api key not found.`))
 	}
-	util.UpdateCtxValuesErrorMsg(out.Ctx, `reqPubKey`, reqPubKey)
-	signature := out.Ctx.GetHeader(`STM-REQ-SIGNATURE`)
+	util.UpdateSessionErrorMsg(out, `reqPubKey`, reqPubKey)
+	signature := out.Header(`STM-REQ-SIGNATURE`)
 	if signature == `` {
-		go_error.ThrowInternal(`auth error. signature not found.`)
+		return go_error.Wrap(errors.New(`auth error. signature not found.`))
 	}
-	timestamp := out.Ctx.GetHeader(`STM-REQ-TIMESTAMP`)
+	timestamp := out.Header(`STM-REQ-TIMESTAMP`)
 	if timestamp == `` {
-		go_error.ThrowInternal(`auth error. timestamp not found`)
+		return go_error.Wrap(errors.New(`auth error. timestamp not found`))
 	}
 	if !go_application.Application.Debug {
 		nowTimestamp := time.Now().UnixNano() / 1e6
 		if nowTimestamp-go_reflect.Reflect.MustToInt64(timestamp) > 10*60*1000 {
-			go_error.ThrowInternal(`auth expired`)
+			return go_error.Wrap(errors.New(`auth expired`))
 		}
 	}
 	requestKeyModel := model.RequestKeyModel.GetByPubKey(reqPubKey)
 	if requestKeyModel == nil {
-		go_error.ThrowInternal(`auth key error`)
+		return go_error.Wrap(errors.New(`auth key error`))
 	}
-	out.UserId = requestKeyModel.UserId
-	util.UpdateCtxValuesErrorMsg(out.Ctx, `jwtAuth`, requestKeyModel.UserId)
+	out.SetUserId(requestKeyModel.UserId)
+	util.UpdateSessionErrorMsg(out, `jwtAuth`, requestKeyModel.UserId)
 	if param != nil {
 		p = param.(ApikeyAuthParam)
 		isAllowed := false
 		for _, v := range strings.Split(p.AllowedType, `,`) {
-			if v == go_reflect.Reflect.MustToString(requestKeyModel.Type) {
+			if v == go_reflect.Reflect.ToString(requestKeyModel.Type) {
 				isAllowed = true
 				break
 			}
 		}
 		if !isAllowed {
-			go_error.ThrowInternalWithInternalMsg(`auth key has not enough right`, fmt.Sprintf(`AllowedType: %s`, p.AllowedType))
+			return go_error.Wrap(errors.New(`auth key has not enough right`))
 		}
 	}
 	// 检查用户是否被禁用
 	userModel := model.TeamModel.GetByUserIdIsBanned(requestKeyModel.UserId, false)
 	if userModel == nil {
-		go_error.ThrowInternal(`user is invalid or is baned`)
+		return go_error.Wrap(errors.New(`user is invalid or is baned`))
 	}
 
-	if !signature2.VerifySignature(this.structContent(timestamp, out.Ctx.Method(), out.Ctx.Path(), out.OriginalParams), signature, reqPubKey) {
-		go_error.ThrowInternalWithInternalMsg(`auth signature error.`,
-			fmt.Sprintf("signature: %s, timestamp: %s, method: %s, path: %s, params: %#v", signature, timestamp, out.Ctx.Method(), out.Ctx.Path(), out.OriginalParams))
+	if !signature2.VerifySignature(this.structContent(timestamp, out.Method(), out.Path(), out.OriginalParams()), signature, reqPubKey) {
+		return go_error.Wrap(errors.New(`auth signature error.`))
 	}
 	if requestKeyModel.Ip == `` || requestKeyModel.Ip == `*` {
-		return
+		return nil
 	}
-	apiIp := out.Ctx.RemoteAddr()
+	apiIp := out.RemoteAddress()
 	for _, ip := range strings.Split(requestKeyModel.Ip, `,`) {
 		if ip == apiIp {
-			return
+			return nil
 		}
 	}
-	go_error.ThrowInternalWithInternalMsg(`ip is baned`, fmt.Sprintf(`ip: %s, expected ip: %s`, apiIp, requestKeyModel.Ip))
+	return go_error.Wrap(errors.New(`ip is baned`))
 }
 
 func (this *ApikeyAuthStrategyClass) structContent(timestamp string, method string, apiPath string, params map[string]interface{}) string {
@@ -120,7 +119,7 @@ func (this *ApikeyAuthStrategyClass) structContent(timestamp string, method stri
 	}
 	sort.Strings(keys)
 	for _, k := range keys {
-		sortedStr += k + `=` + go_reflect.Reflect.MustToString(params[k]) + `&`
+		sortedStr += k + `=` + go_reflect.Reflect.ToString(params[k]) + `&`
 	}
 	sortedStr = strings.TrimSuffix(sortedStr, `&`)
 	return method + `|` + apiPath + `|` + timestamp + `|` + sortedStr

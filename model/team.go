@@ -19,7 +19,7 @@ func (this *Team) GetTableName() string {
 
 func (this *Team) GetByUserIdIsBanned(userId uint64, isBanned bool) *Team {
 	result := Team{}
-	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlInstance.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`is_banned`: func(isBanned bool) int {
 			if isBanned {
 				return 1

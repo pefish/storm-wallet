@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"github.com/pefish/go-error"
 	"github.com/pefish/go-mysql"
@@ -40,7 +41,7 @@ type Balance struct {
 func (this *BalanceLog) GetBalanceByUserIdCurrencyId(userId uint64, currencyId uint64) *Balance {
 	result := Balance{}
 	zero := `0`
-	if notFound := go_mysql.MysqlHelper.MustRawSelectFirst(&result, fmt.Sprintf(`
+	if notFound := go_mysql.MysqlInstance.MustRawSelectFirst(&result, fmt.Sprintf(`
 select sum(if(log_type = 1, amount, 0)) as avail, sum(if(log_type = 2, amount, 0)) as freeze
 from %s where user_id = ? and currency_id = ?
 `, this.GetTableName()), userId, currencyId); notFound {
@@ -58,7 +59,7 @@ from %s where user_id = ? and currency_id = ?
 }
 
 func (this *BalanceLog) ListAllBalanceByUserIdForStruct(results interface{}, userId uint64) {
-	go_mysql.MysqlHelper.MustRawSelect(results, fmt.Sprintf(`
+	go_mysql.MysqlInstance.MustRawSelect(results, fmt.Sprintf(`
 select sum(if(a.log_type = 1, a.amount, 0)) as avail, sum(if(a.log_type = 2, a.amount, 0)) as freeze, b.currency, b.chain
 from %s a
 left join %s b
@@ -78,6 +79,6 @@ func (this *BalanceLog) Freeze(tran *go_mysql.MysqlClass, userId uint64, currenc
 		`ref_id`:      refId,
 	})
 	if num == 0 {
-		go_error.ThrowInternal(`freeze error`)
+		go_error.ThrowInternal(errors.New(`freeze error`))
 	}
 }

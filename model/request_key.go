@@ -21,7 +21,7 @@ func (this *RequestKey) GetTableName() string {
 
 func (this *RequestKey) GetByPubKey(pubKey string) *RequestKey {
 	requestKeyModel := RequestKey{}
-	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&requestKeyModel, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlInstance.MustSelectFirst(&requestKeyModel, this.GetTableName(), `*`, map[string]interface{}{
 		`public_key`: pubKey,
 		`is_deleted`: 0,
 	}); notFound {

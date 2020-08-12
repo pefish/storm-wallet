@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/pefish/go-core/api"
-	api_strategy2 "github.com/pefish/go-core/api-strategy"
+	type_ "github.com/pefish/go-core/api-strategy/type"
 	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"wallet-storm-wallet/api-strategy"
 	"wallet-storm-wallet/controller"
@@ -14,7 +14,7 @@ var UserRoute = []*api.Api{
 		Description: "获取账户余额",
 		Path:        "/v1/balance",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -38,7 +38,7 @@ var UserRoute = []*api.Api{
 		Description: "获取用户开启的所有币种",
 		Path:        "/v1/user-currencies",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -73,7 +73,7 @@ var UserRoute = []*api.Api{
 		Description: "获取用户开启的币种",
 		Path:        "/v1/user-currency",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,
@@ -112,7 +112,7 @@ var UserRoute = []*api.Api{
 		Description: "获取账户指定币种余额",
 		Path:        "/v1/coin-balance",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &api_strategy.ApikeyAuthStrategy,
 				Disable:  false,

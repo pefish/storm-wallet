@@ -1,7 +1,8 @@
 package manage
 
 import (
-	"github.com/pefish/go-core/api-session"
+	"errors"
+	_type "github.com/pefish/go-core/api-session/type"
 	"github.com/pefish/go-core/driver/logger"
 	"github.com/pefish/go-error"
 	"strings"
@@ -40,16 +41,17 @@ func (this *MemberRoleValidateStrategyClass) Init(param interface{}) {
 	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
 }
 
-func (this *MemberRoleValidateStrategyClass) Execute(out *api_session.ApiSessionClass, param interface{}) {
-	memberModel := model.MemberModel.GetValidByUserId(out.UserId)
+func (this *MemberRoleValidateStrategyClass) Execute(out _type.IApiSession, param interface{}) *go_error.ErrorInfo {
+	memberModel := model.MemberModel.GetValidByUserId(out.UserId())
 	if memberModel == nil {
-		go_error.Throw(`user not found or banned`, constant.MEMBER_NOT_FOUND)
+		return go_error.WrapWithAll(errors.New(`user not found or banned`), constant.MEMBER_NOT_FOUND, nil)
 	}
 	if param != nil {
 		newParam := param.(MemberRoleValidateParam)
 		if !strings.Contains(memberModel.Roles, newParam.RequiredRole) {
-			go_error.ThrowInternal(`required scope: ` + newParam.RequiredRole)
+			return go_error.Wrap(errors.New(`required scope: ` + newParam.RequiredRole))
 		}
 	}
-	out.Datas[`memberModel`] = memberModel
+	out.SetData(`memberModel`, memberModel)
+	return nil
 }

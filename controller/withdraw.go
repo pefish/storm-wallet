@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
+	_type "github.com/pefish/go-core/api-session/type"
 	"time"
 	"wallet-storm-wallet/constant"
 	external_service "wallet-storm-wallet/external-service"
 	"wallet-storm-wallet/model"
 
-	api_session "github.com/pefish/go-core/api-session"
 	go_decimal "github.com/pefish/go-decimal"
 	go_error "github.com/pefish/go-error"
 	go_http "github.com/pefish/go-http"
@@ -34,58 +35,58 @@ type WithdrawParam struct {
 	Memo      *string `json:"memo,omitempty" validate:"omitempty" desc:"memo"`
 }
 
-func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *WithdrawControllerClass) Withdraw(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	params := WithdrawParam{}
 	apiSession.ScanParams(&params)
 
-	lockKey := fmt.Sprintf(`storm_wallet_withdraw_%d_lock`, apiSession.UserId)
+	lockKey := fmt.Sprintf(`storm_wallet_withdraw_%d_lock`, apiSession.UserId())
 	uniqueId := uuid.NewV1().String()
 	if !go_redis.RedisHelper.MustGetLock(lockKey, uniqueId, 3*time.Second) {
-		go_error.Throw(`rate limit`, constant.API_RATELIMIT)
+		return nil, go_error.WrapWithAll(errors.New(`rate limit`), constant.API_RATELIMIT, nil)
 	}
 	defer go_redis.RedisHelper.MustReleaseLock(lockKey, uniqueId)
 
 	// 检查request id是否已存在
-	withdrawModel := model.WithdrawModel.GetByUserIdRequestId(apiSession.UserId, params.RequestId)
+	withdrawModel := model.WithdrawModel.GetByUserIdRequestId(apiSession.UserId(), params.RequestId)
 	if withdrawModel != nil {
-		go_error.Throw(`request id is used already`, constant.WITHDRAW_REQUEST_ID_USED)
+		return nil, go_error.WrapWithAll(errors.New(`request id is used already`), constant.WITHDRAW_REQUEST_ID_USED, nil)
 	}
 
 	// 检查币种是否开启提币
 	currencyModel := model.CurrencyModel.GetByCurrencyChain(params.Currency, params.Chain)
 	if currencyModel == nil {
-		go_error.Throw(`currency is not available`, constant.CURRENCY_NOT_AVAILABLE)
+		return nil, go_error.WrapWithAll(errors.New(`currency is not available`), constant.CURRENCY_NOT_AVAILABLE, nil)
 	}
 	if currencyModel.IsWithdrawEnable == 0 {
-		go_error.Throw(`currency withdraw banned`, constant.CURRENCY_WITHDRAW_BANNED)
+		return nil, go_error.WrapWithAll(errors.New(`currency withdraw banned`), constant.CURRENCY_WITHDRAW_BANNED, nil)
 	}
 
 	// 检查用户是否具有此币种
-	userCurrencyModel := model.UserCurrencyModel.GetByUserIdCurrencyId(apiSession.UserId, currencyModel.Id)
+	userCurrencyModel := model.UserCurrencyModel.GetByUserIdCurrencyId(apiSession.UserId(), currencyModel.Id)
 	if userCurrencyModel == nil {
-		go_error.Throw(`user currency is not available`, constant.USER_CURRENCY_NOT_AVAILABLE)
+		return nil, go_error.WrapWithAll(errors.New(`user currency is not available`), constant.USER_CURRENCY_NOT_AVAILABLE, nil)
 	}
 
 	// 校验数额与币种精度的匹配
 	if go_decimal.Decimal.Start(params.Amount).GetPrecision() > int32(currencyModel.Decimals) {
-		go_error.Throw(`amount decimal error`, constant.AMOUNT_DECIMAL_ERR)
+		return nil, go_error.WrapWithAll(errors.New(`amount decimal error`), constant.AMOUNT_DECIMAL_ERR, nil)
 	}
 
 	// 校验用户最大提现金额
 	if userCurrencyModel.MaxWithdrawAmount != -1 && go_decimal.Decimal.Start(params.Amount).Gt(userCurrencyModel.MaxWithdrawAmount) {
-		go_error.Throw(`amount must lte max withdraw amount`, constant.USER_MAX_WITHDRAW_AMOUNT)
+		return nil, go_error.WrapWithCode(errors.New(`amount must lte max withdraw amount`), constant.USER_MAX_WITHDRAW_AMOUNT)
 	}
 
 	// 检查余额
-	balance := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId, currencyModel.Id)
+	balance := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId(), currencyModel.Id)
 	if go_decimal.Decimal.Start(balance.Avail).Sub(balance.Freeze).Lt(params.Amount) {
-		go_error.Throw(`balance not enough`, constant.BALANCE_NOT_ENOUGH)
+		return nil, go_error.WrapWithCode(errors.New(`balance not enough`), constant.BALANCE_NOT_ENOUGH)
 	}
 
 	// 检查用户此币种每日限额
-	sum := model.WithdrawModel.GetWithdrewTotalOfToday(apiSession.UserId, params.Currency, params.Chain)
+	sum := model.WithdrawModel.GetWithdrewTotalOfToday(apiSession.UserId(), params.Currency, params.Chain)
 	if userCurrencyModel.WithdrawLimitDaily != -1 && go_decimal.Decimal.Start(sum).Add(params.Amount).Gt(userCurrencyModel.WithdrawLimitDaily) {
-		go_error.Throw(`must lt withdraw limit daily`, constant.WITHDRAW_LIMIT_DAILY)
+		return nil, go_error.WrapWithCode(errors.New(`must lt withdraw limit daily`), constant.WITHDRAW_LIMIT_DAILY)
 	}
 
 	// 校验目标地址格式是否正确
@@ -97,19 +98,19 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 
 	// 有tag的话，校验tag最大长度
 	if memo != `` && currencyModel.HasTag == 1 && len(memo) > int(currencyModel.MaxTagLength) {
-		go_error.Throw(`memo is too long`, constant.MEMO_TOO_LONG)
+		return nil, go_error.WrapWithCode(errors.New(`memo is too long`), constant.MEMO_TOO_LONG)
 	}
 
 	// 提现二次确认
-	userModel := model.TeamModel.GetByUserIdIsBanned(apiSession.UserId, false)
+	userModel := model.TeamModel.GetByUserIdIsBanned(apiSession.UserId(), false)
 	if userModel == nil {
-		go_error.Throw(`invalid user`, constant.ILLEGAL_USER)
+		return nil, go_error.WrapWithCode(errors.New(`invalid user`), constant.ILLEGAL_USER)
 	}
 	// 对提现二次确认请求签名
-	timestamp := go_reflect.Reflect.MustToString(time.Now().UnixNano() / 1e6)
-	responseKeyModel := model.ResponseKeyModel.GetByUserId(apiSession.UserId)
+	timestamp := go_reflect.Reflect.ToString(time.Now().UnixNano() / 1e6)
+	responseKeyModel := model.ResponseKeyModel.GetByUserId(apiSession.UserId())
 	if responseKeyModel == nil {
-		go_error.ThrowInternal(` - user do not have response keys.`)
+		return nil, go_error.Wrap(errors.New(` - user do not have response keys.`))
 	}
 	go_logger.Logger.Debug(`params: `, params)
 	paramsMap := map[string]interface{}{
@@ -123,7 +124,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
 	go_logger.Logger.DebugF("content: %s\n", content)
 	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second))
-	strResult := httpUtil.MustPostForString(go_http.RequestParam{
+	_, strResult, err := httpUtil.Post(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,
 		Headers: map[string]interface{}{
@@ -131,15 +132,18 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 			`STM-RES-TIMESTAMP`: timestamp,
 		},
 	})
+	if err != nil {
+		return nil, go_error.Wrap(err)
+	}
 	mark := `ok`
 	confirmStatus := 2
 	if strResult != `ok` {
 		mark = go_json.Json.MustStringify(strResult)
 		confirmStatus = 3
 	}
-	go_mysql.MysqlHelper.MustRawExec(
+	go_mysql.MysqlInstance.MustRawExec(
 		`insert into push_log (user_id,error_count,url,status,type,data, mark,chain,currency) values (?,?,?,?,?,?,?,?,?)`,
-		apiSession.UserId,
+		apiSession.UserId(),
 		0,
 		userModel.WithdrawConfirmUrl,
 		confirmStatus,
@@ -150,9 +154,9 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 		params.Currency,
 		)
 	if strResult != `ok` {
-		go_error.Throw(`withdraw confirm failed`, constant.WITHDRAW_CONFIRM_FAIL)
+		return nil, go_error.WrapWithCode(errors.New(`withdraw confirm failed`), constant.WITHDRAW_CONFIRM_FAIL)
 	}
-	tran := go_mysql.MysqlHelper.MustBegin()
+	tran := go_mysql.MysqlInstance.MustBegin()
 	defer func() {
 		if err := recover(); err != nil {
 			tran.MustRollback()
@@ -167,13 +171,13 @@ func (this *WithdrawControllerClass) Withdraw(apiSession *api_session.ApiSession
 	if go_decimal.Decimal.Start(params.Amount).Lte(userCurrencyModel.WithdrawCheckLimit) || go_decimal.Decimal.Start(userCurrencyModel.WithdrawCheckLimit).Eq(-1) {
 		// 直接通过
 		status = 3
-		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
+		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId(), currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
 	} else {
 		status = 2
-		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId, currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
+		id = model.WithdrawModel.Insert(tran, params.RequestId, apiSession.UserId(), currencyModel.Id, params.Currency, params.Chain, params.Amount, status, params.Address, memo)
 	}
 	// 冻结资产
-	model.BalanceLogModel.Freeze(tran, apiSession.UserId, currencyModel.Id, params.Amount, 1, id)
+	model.BalanceLogModel.Freeze(tran, apiSession.UserId(), currencyModel.Id, params.Amount, 1, id)
 
-	return ``
+	return ``, nil
 }

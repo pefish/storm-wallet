@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"github.com/pefish/go-core/api-session"
+	_type "github.com/pefish/go-core/api-session/type"
+	go_error "github.com/pefish/go-error"
 	"github.com/pefish/go-mysql"
 	"wallet-storm-wallet/model"
 )
@@ -18,19 +19,19 @@ type ListBalanceReturn struct {
 	Freeze   string `json:"freeze"`
 }
 
-func (this *UserControllerClass) ListBalance(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *UserControllerClass) ListBalance(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	results := []ListBalanceReturn{}
-	model.BalanceLogModel.ListAllBalanceByUserIdForStruct(&results, apiSession.UserId)
-	return results
+	model.BalanceLogModel.ListAllBalanceByUserIdForStruct(&results, apiSession.UserId())
+	return results, nil
 }
 
-func (this *UserControllerClass) GetCoinBalance(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *UserControllerClass) GetCoinBalance(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	params := GetUserCurrencyParam{}
 	apiSession.ScanParams(&params)
 	currencyInfo := model.CurrencyModel.GetIdByCurrencyChain(params.Currency, params.Chain)
 
-	result := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId, currencyInfo.Id)
-	return result
+	result := model.BalanceLogModel.GetBalanceByUserIdCurrencyId(apiSession.UserId(), currencyInfo.Id)
+	return result, nil
 }
 
 type ListUserCurrencyReturn struct {
@@ -51,9 +52,9 @@ type ListUserCurrencyReturn struct {
 	IsDepositEnable               uint64  `json:"is_deposit_enable"`
 }
 
-func (this *UserControllerClass) ListUserCurrencies(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *UserControllerClass) ListUserCurrencies(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	var results []ListUserCurrencyReturn
-	go_mysql.MysqlHelper.MustRawSelect(&results, `
+	go_mysql.MysqlInstance.MustRawSelect(&results, `
 select
 a.withdraw_limit_daily,a.max_withdraw_amount,a.withdraw_check_limit,
 b.currency,b.chain,b.contract_address,b.decimals,b.deposit_confirmation_threshold,b.withdraw_confirmation_threshold,
@@ -62,8 +63,8 @@ from user_currency a
 left join currency b
 on a.currency_id = b.id
 where a.user_id = ?
-`, apiSession.UserId)
-	return results
+`, apiSession.UserId())
+	return results, nil
 }
 
 type GetUserCurrencyParam struct {
@@ -71,11 +72,11 @@ type GetUserCurrencyParam struct {
 	Chain    string `json:"chain" validate:"required"`
 }
 
-func (this *UserControllerClass) GetUserCurrency(apiSession *api_session.ApiSessionClass) interface{} {
+func (this *UserControllerClass) GetUserCurrency(apiSession _type.IApiSession) (interface{}, *go_error.ErrorInfo) {
 	var param GetUserCurrencyParam
 	apiSession.ScanParams(&param)
 	var result ListUserCurrencyReturn
-	go_mysql.MysqlHelper.MustRawSelectFirst(&result, `
+	go_mysql.MysqlInstance.MustRawSelectFirst(&result, `
 select
 a.withdraw_limit_daily,a.max_withdraw_amount,a.withdraw_check_limit,
 b.currency,b.chain,b.contract_address,b.decimals,b.deposit_confirmation_threshold,b.withdraw_confirmation_threshold,
@@ -84,6 +85,6 @@ from user_currency a
 left join currency b
 on a.currency_id = b.id
 where a.user_id = ? and b.currency = ? and b.chain = ?
-`, apiSession.UserId, param.Currency, param.Chain)
-	return result
+`, apiSession.UserId(), param.Currency, param.Chain)
+	return result, nil
 }

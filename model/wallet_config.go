@@ -22,7 +22,7 @@ func (this *WalletConfig) GetTableName() string {
 
 func (this *WalletConfig) GetByChainType(chain string, type_ uint64) *WalletConfig {
 	result := WalletConfig{}
-	if notFound := go_mysql.MysqlHelper.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
+	if notFound := go_mysql.MysqlInstance.MustSelectFirst(&result, this.GetTableName(), `*`, map[string]interface{}{
 		`type`:       type_,
 		`chain`:      chain,
 		`is_deleted`: 0,

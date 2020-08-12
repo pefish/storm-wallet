@@ -2,11 +2,10 @@ package manage
 
 import (
 	"github.com/pefish/go-core/api"
+	type_ "github.com/pefish/go-core/api-strategy/type"
 	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"wallet-storm-wallet/api-strategy/manage"
 	manage2 "wallet-storm-wallet/controller/manage"
-
-	api_strategy2 "github.com/pefish/go-core/api-strategy"
 )
 
 var MemberRoute = []*api.Api{
@@ -14,7 +13,7 @@ var MemberRoute = []*api.Api{
 		Description: "新增成员(必须先同步用户且不在任何团队中)",
 		Path:        "/v1/add-member",
 		Method:      "POST",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -44,7 +43,7 @@ var MemberRoute = []*api.Api{
 		Description: "从团队中移除成员",
 		Path:        "/v1/remove-member",
 		Method:      "POST",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -73,7 +72,7 @@ var MemberRoute = []*api.Api{
 		Description: "编辑成员",
 		Path:        "/v1/edit-member",
 		Method:      "POST",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -102,7 +101,7 @@ var MemberRoute = []*api.Api{
 		Description: "列出成员",
 		Path:        "/v1/list-member",
 		Method:      "GET",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 				Param: manage.OauthJwtValidateParam{
@@ -128,7 +127,7 @@ var MemberRoute = []*api.Api{
 		Description: "从授权服务器同步成员信息(前端控制注册或登陆成功之后才调一次)",
 		Path:        "/v1/sync-member",
 		Method:      "POST",
-		Strategies: []api_strategy2.StrategyData{
+		Strategies: []type_.StrategyData{
 			{
 				Strategy: &manage.OauthJwtValidateStrategy,
 			},
