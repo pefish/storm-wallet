@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"fmt"
+	go_application "github.com/pefish/go-application"
 	_type "github.com/pefish/go-core/api-session/type"
 	"time"
 	"wallet-storm-wallet/constant"
@@ -123,7 +124,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession _type.IApiSession) (int
 	content := go_json.Json.MustStringify(paramsMap)
 	sig := signature.SignMessage(content+`|`+timestamp, responseKeyModel.PrivateKey)
 	go_logger.Logger.DebugF("content: %s\n", content)
-	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second))
+	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second), go_http.WithIsDebug(go_application.Application.Debug))
 	_, strResult, err := httpUtil.Post(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: params,
