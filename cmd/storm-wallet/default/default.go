@@ -17,7 +17,6 @@ import (
 )
 
 type DefaultCommand struct {
-
 }
 
 func (d DefaultCommand) DecorateFlagSet(flagSet *flag.FlagSet) error {
@@ -64,6 +63,3 @@ func (d DefaultCommand) Start(data commander.StartData) error {
 func (d DefaultCommand) OnExited() error {
 	return nil
 }
-
-
-
