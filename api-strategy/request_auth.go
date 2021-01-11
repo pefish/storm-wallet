@@ -38,13 +38,13 @@ type ApikeyAuthParam struct {
 }
 
 func (this *ApikeyAuthStrategyClass) InitAsync(param interface{}, onAppTerminated chan interface{}) {
-	logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
-	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
+	logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
+	defer logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
 }
 
 func (this *ApikeyAuthStrategyClass) Init(param interface{}) {
-	logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init`, this.GetName())
-	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
+	logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s Init`, this.GetName())
+	defer logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
 }
 
 func (this *ApikeyAuthStrategyClass) Execute(out _type.IApiSession, param interface{}) *go_error.ErrorInfo {

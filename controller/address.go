@@ -6,7 +6,7 @@ import (
 	_type "github.com/pefish/go-core/api-session/type"
 	"time"
 	"wallet-storm-wallet/constant"
-	external_service "wallet-storm-wallet/external-service"
+	"wallet-storm-wallet/controller/internal/address"
 	"wallet-storm-wallet/model"
 
 	go_error "github.com/pefish/go-error"
@@ -71,13 +71,16 @@ func (this *AddressControllerClass) NewAddress(apiSession _type.IApiSession) (in
 		}, nil
 	}
 
-	result := external_service.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId(), params.Index)
+	result, err := address.DepositAddressService.GetAddress(currencyModel.Series, apiSession.UserId(), params.Index)
+	if err != nil {
+		return nil, go_error.Wrap(err)
+	}
 	if result.Address == `` {
 		return nil, go_error.WrapWithAll(errors.New(`address service return a null address`), constant.ILLEGAL_ADDRESS, nil)
 	}
 	model.DepositAddressModel.Insert(apiSession.UserId(), result.Address, result.Path, currencyModel.Series, params.Index, ``)
 	return NewAddressReturn{
-		Address: result.Address,
+		Address: "result.Address",
 		Tag:     ``,
 	}, nil
 }
@@ -101,7 +104,7 @@ func (this *AddressControllerClass) ValidateAddress(apiSession _type.IApiSession
 	if params.Tag != nil {
 		memo = *params.Tag
 	}
-	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
+	address.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
 	return true, nil
 }
 

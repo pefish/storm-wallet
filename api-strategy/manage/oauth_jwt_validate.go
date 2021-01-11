@@ -42,13 +42,13 @@ func (this *OauthJwtValidateClass) GetErrorCode() uint64 {
 }
 
 func (this *OauthJwtValidateClass) InitAsync(param interface{}, onAppTerminated chan interface{}) {
-	logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
-	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
+	logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s InitAsync`, this.GetName())
+	defer logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s InitAsync defer`, this.GetName())
 }
 
 func (this *OauthJwtValidateClass) Init(param interface{}) {
-	logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init`, this.GetName())
-	defer logger.LoggerDriver.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
+	logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s Init`, this.GetName())
+	defer logger.LoggerDriverInstance.Logger.DebugF(`api-strategy %s Init defer`, this.GetName())
 }
 
 type OauthJwtValidateParam struct {

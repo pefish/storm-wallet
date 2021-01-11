@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	go_application "github.com/pefish/go-application"
 	_type "github.com/pefish/go-core/api-session/type"
 	"time"
 	"wallet-storm-wallet/constant"
-	external_service "wallet-storm-wallet/external-service"
+	"wallet-storm-wallet/controller/internal/address"
 	"wallet-storm-wallet/model"
 
 	go_decimal "github.com/pefish/go-decimal"
@@ -96,7 +95,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession _type.IApiSession) (int
 	if params.Memo != nil {
 		memo = *params.Memo
 	}
-	external_service.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
+	address.DepositAddressService.ValidateAddress(currencyModel.Series, params.Address, memo)
 
 	// 有tag的话，校验tag最大长度
 	if memo != `` && currencyModel.HasTag == 1 && len(memo) > int(currencyModel.MaxTagLength) {
@@ -128,7 +127,7 @@ func (this *WithdrawControllerClass) Withdraw(apiSession _type.IApiSession) (int
 	}
 	sig := signature.SignMessage(string(content)+`|`+timestamp, responseKeyModel.PrivateKey)
 	go_logger.Logger.DebugF("content: %s\n", content)
-	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second), go_http.WithIsDebug(go_application.Application.Debug))
+	httpUtil := go_http.NewHttpRequester(go_http.WithTimeout(10 * time.Second))
 	_, strResult, err := httpUtil.Post(go_http.RequestParam{
 		Url:    userModel.WithdrawConfirmUrl,
 		Params: paramsMap,
