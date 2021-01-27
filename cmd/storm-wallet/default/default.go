@@ -4,7 +4,6 @@ import (
 	"flag"
 	"github.com/pefish/go-commander"
 	go_config "github.com/pefish/go-config"
-	"github.com/pefish/go-core/driver/logger"
 	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"github.com/pefish/go-core/service"
 	go_logger "github.com/pefish/go-logger"
@@ -24,10 +23,6 @@ func (d DefaultCommand) DecorateFlagSet(flagSet *flag.FlagSet) error {
 }
 
 func (d DefaultCommand) Start(data commander.StartData) error {
-	// 处理日志
-	go_logger.Logger = go_logger.NewLogger(go_config.Config.MustGetStringDefault(`logLevel`, `debug`), go_logger.WithPrefix(service.Service.GetName()))
-	logger.LoggerDriverInstance.Register(go_logger.Logger)
-
 	// 初始化数据库连接
 	mysqlConfig := go_config.Config.MustGetMap(`mysql`)
 	go_mysql.MysqlInstance.SetLogger(go_logger.Logger)

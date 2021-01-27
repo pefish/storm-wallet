@@ -12,4 +12,4 @@ ENV GO_CONFIG /app/config/pom.yaml
 ENV GO_SECRET /app/secret/pom.yaml
 CMD ["/app/bin/*", "--help"]
 
-# docker build -t pefish/storm-wallet:v0.0.1 .
+# docker build -t pefish/storm-wallet:v0.0.2 .
