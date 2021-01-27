@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/pefish/go-commander"
 	go_config "github.com/pefish/go-config"
+	"github.com/pefish/go-core/driver/logger"
 	global_api_strategy2 "github.com/pefish/go-core/global-api-strategy"
 	"github.com/pefish/go-core/service"
 	go_logger "github.com/pefish/go-logger"
@@ -38,6 +39,8 @@ func (d DefaultCommand) Start(data commander.StartData) error {
 	service.Service.SetName(`storm钱包服务api`)
 	service.Service.SetPath(`/api/storm`)
 	global_api_strategy2.ParamValidateStrategyInstance.SetErrorCode(constant.PARAM_ERROR)
+
+	logger.LoggerDriverInstance.Register(go_logger.Logger)
 
 	service.Service.SetRoutes(
 		route.AddressRoute,
