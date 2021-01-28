@@ -23,7 +23,7 @@ func (d DefaultCommand) DecorateFlagSet(flagSet *flag.FlagSet) error {
 	return nil
 }
 
-func (d DefaultCommand) Start(data commander.StartData) error {
+func (d DefaultCommand) Start(data *commander.StartData) error {
 	// 初始化数据库连接
 	mysqlConfig := go_config.Config.MustGetMap(`mysql`)
 	go_mysql.MysqlInstance.SetLogger(go_logger.Logger)
@@ -58,6 +58,6 @@ func (d DefaultCommand) Start(data commander.StartData) error {
 	return nil
 }
 
-func (d DefaultCommand) OnExited() error {
+func (d DefaultCommand) OnExited(data *commander.StartData) error {
 	return nil
 }
