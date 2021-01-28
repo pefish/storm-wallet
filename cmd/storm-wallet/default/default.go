@@ -12,6 +12,7 @@ import (
 	go_redis "github.com/pefish/go-redis"
 	"log"
 	"wallet-storm-wallet/constant"
+	"wallet-storm-wallet/global"
 	"wallet-storm-wallet/route"
 	"wallet-storm-wallet/route/manage"
 )
@@ -51,6 +52,9 @@ func (d DefaultCommand) Start(data *commander.StartData) error {
 	)
 	service.Service.SetHost(go_config.Config.MustGetString(`host`))
 	service.Service.SetPort(go_config.Config.MustGetUint64Default(`port`, 8000))
+
+	global.Global.Init()
+
 	err := service.Service.Run()
 	if err != nil {
 		log.Fatal(err)

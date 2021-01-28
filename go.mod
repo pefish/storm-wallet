@@ -18,6 +18,7 @@ require (
 	github.com/pefish/go-reflect v0.2.2
 	github.com/pefish/go-time v0.1.0
 	github.com/pefish/storm-golang-sdk v0.2.0
+	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 )
 

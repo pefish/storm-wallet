@@ -80,7 +80,7 @@ func (this *AddressControllerClass) NewAddress(apiSession _type.IApiSession) (in
 	}
 	model.DepositAddressModel.Insert(apiSession.UserId(), result.Address, result.Path, currencyModel.Series, params.Index, ``)
 	return NewAddressReturn{
-		Address: "result.Address",
+		Address: result.Address,
 		Tag:     ``,
 	}, nil
 }
